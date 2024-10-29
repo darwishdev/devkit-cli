@@ -1,3 +1,10 @@
+
+pushmain:
+	git add . && git commit -m "$(MSG)" && git push 
+
+pushv:
+	git tag $(TAG) && git push origin $(TAG)
+
 build : 
 	go build 
 clean:
