@@ -7,5 +7,4 @@
 *.out
 go.work
 build
-release
 go.work.sum
