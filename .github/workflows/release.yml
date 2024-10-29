@@ -44,5 +44,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this guide for more: https://github.com/actions/create-release#uploading-assets-to-your-release
           asset_path: ./devkit.zip
-          asset_name: devkit-cli-${{ github.ref.refs }}.zip
+          asset_name: devkit-cli-${{ github.ref }}.zip
           asset_content_type: application/zip
