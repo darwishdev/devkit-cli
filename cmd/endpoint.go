@@ -50,9 +50,7 @@ var endpointCmd = &cobra.Command{
 				continue
 
 			}
-			fmt.Println("not found", key)
 			injectioFile, ok := injecteionFiles[key]
-
 			if !ok {
 				continue
 			}
