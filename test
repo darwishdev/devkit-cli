@@ -1,9 +1,0 @@
-GIT_USER=yourgituser
-DOCKER_HUB_USER=youdockeruser
-BUF_USER=yourbufuser
-GITHUB_TOKEN=yourgittoken
-API_SERVICE_NAME=devkit
-API_VERSION=v1
-GOOGLE_CLIENT_ID=google_client_id
-GOOGLE_CLIENT_SECRET=google_client_secret
-RESEND_API_KEY=resend_key

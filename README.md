@@ -37,3 +37,19 @@ go install google.golang.org/protobuf/cmd/protoc-gen-go
 
 Once you have these dependencies set up, you're ready to install devkit-cli!
 
+
+---
+
+## Installation
+
+To install `devkit-cli`, run the following command in your terminal:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/darwishdev/devkit-cli/refs/heads/main/install.sh | bash
+```
+
+This command downloads and runs the installation script directly from the repository, setting up `devkit-cli` on your system.
+
+---
+
+

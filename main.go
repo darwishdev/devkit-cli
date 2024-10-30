@@ -19,7 +19,7 @@ import (
 func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	appConfig, err := config.NewConfig("./", "devkit", "./devkit.yaml")
+	appConfig, err := config.NewConfig("$HOME/.config/devkitcli", "devkit", "./", "devkit")
 	if err != nil {
 		panic(err)
 	}
@@ -33,7 +33,6 @@ func main() {
 
 		},
 	})
-	log.Debug().Interface("clieCOnfig", cliConfig).Msg("main")
 	gitClient := gitclient.NewGitClientRepo(context.Background(), cliConfig.GithubToken)
 	newCmd := new.NewNewCmd(appConfig, fileUtils, templateUtils, gitClient)
 	command := cmd.NewCommand(appConfig, newCmd, fileUtils, templateUtils, sqlSeeder, gitClient)

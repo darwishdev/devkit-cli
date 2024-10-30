@@ -7,7 +7,6 @@ import (
 	"os/exec"
 
 	"github.com/google/go-github/v66/github"
-	"github.com/rs/zerolog/log"
 	"golang.org/x/oauth2"
 )
 
@@ -35,7 +34,6 @@ func NewGitClientRepo(ctx context.Context, token string) GitClientInterface {
 		&oauth2.Token{AccessToken: token},
 	)
 	tc := oauth2.NewClient(ctx, ts)
-	log.Debug().Str("token", token).Msg("get token")
 	client := github.NewClient(tc)
 
 	return &GitClientRepo{

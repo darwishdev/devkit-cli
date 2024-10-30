@@ -77,5 +77,11 @@ func (c *NewCmd) NewApi(cmd *cobra.Command, args []string) {
 		fmt.Println("Error running go mod tidy:", err)
 		os.Exit(1)
 	}
+
+	err = c.ExecCmd(appName, "devkit", "init")
+	if err != nil {
+		fmt.Println("error init the project:", err)
+		os.Exit(1)
+	}
 	log.Debug().Str(bufUser, "new api from domain").Msg("domain")
 }
