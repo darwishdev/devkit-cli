@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 func (c *NewCmd) ExecCmd(dir string, name string, args ...string) error {
@@ -24,15 +24,15 @@ func (c *NewCmd) ExecCmd(dir string, name string, args ...string) error {
 
 }
 
-func (c *NewCmd) NewApi(cmd *cobra.Command, args []string) {
+func (c *NewCmd) NewApi(args []string, flags *pflag.FlagSet) {
 	cliConfig := c.config.GetCliConfig()
 	appName := args[0]
-	org, err := cmd.Flags().GetString("org")
+	org, err := flags.GetString("org")
 	ctx := context.Background()
 	if err != nil || org == "" {
 		org = cliConfig.GitUser
 	}
-	bufUser, err := cmd.Flags().GetString("buf-user")
+	bufUser, err := flags.GetString("buf-user")
 	if err != nil || bufUser == "" {
 		bufUser = cliConfig.BufUser
 	}

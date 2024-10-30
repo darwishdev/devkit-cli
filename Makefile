@@ -23,7 +23,7 @@ new_endpoint:
 new_feature:
 	 make build && cd example && ../devkit new feature accounts roles
 new_domain:
-	make build && cd example && rm -rf app/accounts && ../devkit new domain accounts
+	make build && cd new_fork && rm -rf app/products && ../devkit new domain products
 download_cli:
 	curl -sSL https://raw.githubusercontent.com/darwishdev/devkit-cli/refs/heads/main/install.sh | bash
 

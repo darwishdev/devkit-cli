@@ -5,17 +5,19 @@ import (
 	"github.com/darwishdev/devkit-cli/pkg/fileutils"
 	"github.com/darwishdev/devkit-cli/pkg/gitclient"
 	"github.com/darwishdev/devkit-cli/pkg/templates"
-	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 type NewCmdInterface interface {
-	NewApi(cmd *cobra.Command, args []string)
+	NewApi(args []string, flags *pflag.FlagSet)
+	NewDomain(args []string, flags *pflag.FlagSet)
 }
 type NewCmd struct {
 	config        config.ConfigInterface
 	fileUtils     fileutils.FileUtilsInterface
 	templateUtils templates.TemplatesInterface
 	gitClient     gitclient.GitClientInterface
+	basePath      string
 }
 
 func NewNewCmd(config config.ConfigInterface, fileUtils fileutils.FileUtilsInterface, templateUtils templates.TemplatesInterface, gitClient gitclient.GitClientInterface) NewCmdInterface {
@@ -24,5 +26,6 @@ func NewNewCmd(config config.ConfigInterface, fileUtils fileutils.FileUtilsInter
 		fileUtils:     fileUtils,
 		templateUtils: templateUtils,
 		gitClient:     gitClient,
+		basePath:      "app",
 	}
 }

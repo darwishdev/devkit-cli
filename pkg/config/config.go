@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/viper"
-	"gopkg.in/yaml.v3"
 )
 
 type CliConfig struct {
@@ -133,15 +132,5 @@ func (c *Config) GetProjectConfig() (*ProjectConfig, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	file, err := os.ReadFile(c.ProjectFilePath)
-	if err != nil {
-
-	}
-	config := ProjectConfig{}
-	err = yaml.Unmarshal(file, &config)
-	if err != nil {
-		return nil, err
-	}
-	return &config, nil
+	return &projectConfig, nil
 }

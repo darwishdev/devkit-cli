@@ -53,3 +53,26 @@ This command downloads and runs the installation script directly from the reposi
 ---
 
 
+## Configuration
+
+devkit-cli relies on a configuration file to store essential settings and API keys. This file is automatically created during installation at `~/.config/devkitcli/devkit`.
+
+Here's a breakdown of the fields you need to populate:
+
+*   **GIT_USER**: Your GitHub username.
+*   **DOCKER_HUB_USER**: Your Docker Hub username.
+*   **BUF_USER**: Your Buf username.
+*   **GITHUB_TOKEN**:  Your GitHub personal access token. This token requires permissions for repository creation and management.
+*   **API_SERVICE_NAME**: The desired name for your API service (e.g., "devkit").
+*   **API_VERSION**: The initial version of your API (e.g., "v1").
+*   **GOOGLE_CLIENT_ID**: The client ID from your Google Cloud project.
+*   **GOOGLE_CLIENT_SECRET**: The client secret from your Google Cloud project.
+*   **RESEND_API_KEY**: Your Resend API key.
+
+**Important:**
+
+*   Open the `~/.config/devkitcli/devkit` file in a text editor and replace the placeholder values with your actual credentials.
+*   Ensure the `GITHUB_TOKEN` has the necessary permissions for repository creation and management within your GitHub account.
+*   Keep your configuration file secure and do not share sensitive information like API keys publicly.
+
+Once you've configured these settings, devkit-cli will be able to leverage these credentials to streamline your development workflow and automate various tasks.

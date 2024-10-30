@@ -4,14 +4,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func (c *Command) getApiCmd() *cobra.Command {
+func (c *Command) getDomainCmd() *cobra.Command {
 	apiCmd := &cobra.Command{
-		Use:   "api [app-name]",
-		Short: "Create a new API application",
-		Long:  `Create a new API application with the specified parameters.`,
+		Use:   "domain [domain_name]",
+		Short: "Create a new domain",
+		Long:  `Create a new domain in the current directory.`,
 		Args:  cobra.ExactArgs(1), // Ensure exactly three arguments are provided
 		Run: func(cmd *cobra.Command, args []string) {
-			c.newCmd.NewApi(args, cmd.Flags())
+			c.newCmd.NewDomain(args, cmd.Flags())
 		},
 	}
 
