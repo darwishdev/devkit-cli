@@ -10,7 +10,7 @@ echo "Downloading devkit-cli version $RELEASE_TAG..."
 wget https://github.com/darwishdev/devkit-cli/releases/download/$RELEASE_TAG/devkit-cli-refs.tags.$RELEASE_TAG.zip
 
 echo "Extracting files..."
-unzip devkit-cli-refs.tags.$RELEASE_TAG.zip > /dev/null
+unzip devkit-cli-refs.tags.$RELEASE_TAG.zip 
 
 echo "Setting up the installation directory..."
 mkdir -p ~/devkitcli ~/.config/devkitcli && cp -r release/* ~/devkitcli/ && rm -rf release
