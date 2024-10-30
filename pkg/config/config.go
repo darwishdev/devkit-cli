@@ -79,6 +79,8 @@ func NewConfig(cliConfigPath string, cliConfigName string, projectFilePath strin
 	}, err
 }
 
+// InitProjectConfig creates a new project configuration file with default values
+// based on the global CLI configuration.
 func (c *Config) InitProjectConfig() error {
 	fullPath := fmt.Sprintf("%s/%s.env", c.ProjectFilePath, c.ProjectFileName)
 	v := viper.New()
@@ -111,16 +113,6 @@ func (c *Config) InitProjectConfig() error {
 	v.Set("DB_SOURCE", "")
 	v.Set("APP_NAME", filepath.Base(currenDireName))
 	v.SafeWriteConfig()
-	// Marshal config data to YAML
-	// configData, err := yaml.Marshal(&config)
-	// if err != nil {
-	// 	return err
-	// }
-	// // Write config file
-	// err = os.WriteFile(c.ProjectFilePath, configData, 0644)
-	// if err != nil {
-	// 	return err
-	// }
 	return nil
 }
 func (c *Config) GetCliConfig() *CliConfig {

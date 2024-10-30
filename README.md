@@ -107,3 +107,29 @@ This command automates the initial setup of a new Go backend API project, provid
 ---
 
 
+### `devkit init`
+
+This command initializes a new project configuration file in the current directory.
+
+**Usage:**
+
+```bash
+devkit init
+```
+
+**Functionality:**
+
+*   Creates a file named `devkit.env` in the current directory.
+*   Populates the file with default values based on your global CLI configuration (`~/.config/devkitcli/devkit`).
+*   Includes fields for:
+    *   `GIT_USER`, `DOCKERHUB_USER`, `BUF_USER`
+    *   `GOOGLE_CLIENT_ID`, `RESEND_API_KEY`, `GOOGLE_CLIENT_SECRET`
+    *   `GITHUB_TOKEN`, `API_SERVICE_NAME`, `API_VERSION`
+    *   `ENVIRONMENT`, `DB_PROJECT_REF`, `SUPABASE_SERVICE_ROLE_KEY`
+    *   `SUPABASE_API_KEY`, `DB_SOURCE`, `APP_NAME`
+
+**Note:** If you created your project using `devkit new api`, this command is already executed as part of the setup. You only need to run `devkit init` manually if you don't have a `.devkit.env` file in your project directory.
+
+---
+
+
