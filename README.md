@@ -76,3 +76,34 @@ Here's a breakdown of the fields you need to populate:
 *   Keep your configuration file secure and do not share sensitive information like API keys publicly.
 
 Once you've configured these settings, devkit-cli will be able to leverage these credentials to streamline your development workflow and automate various tasks.
+
+---
+
+### `devkit new api`
+
+This command bootstraps a new Go backend API application by forking a base repository, cloning it locally, and performing the necessary configurations.
+
+**Usage:**
+
+```bash
+devkit new api [app-name] --org [github-org] --buf-user [buf-user]
+```
+
+*   `app-name`: The name of your new application. This will also be used for the repository name.
+*   `--org`: (Optional) The GitHub organization to fork the base repository to. If not provided, it defaults to the `GIT_USER` specified in your configuration file.
+*   `--buf-user`: (Optional) Your Buf.build username. This is used for pushing API documentation. If not provided, it defaults to the `BUF_USER` in your configuration file.
+
+**Functionality:**
+
+1.  **Forking:** Forks the base API repository to the specified GitHub organization.
+2.  **Cloning:** Clones the forked repository to your local machine.
+3.  **Configuration:** Copies configuration files and replaces placeholders with your application-specific settings.
+4.  **Code Generation:** Executes `make buf` and `make sqlc` to generate code from Protobuf definitions and SQL queries.
+5.  **Dependency Management:** Runs `go mod tidy` to manage Go module dependencies.
+6.  **Project Initialization:** Runs `devkit init` to initialize the project and create a configuration file specific to the new project.
+
+This command automates the initial setup of a new Go backend API project, providing a solid foundation with pre-configured functionalities. You can then focus on building your core application logic without worrying about repetitive boilerplate code.
+
+---
+
+
