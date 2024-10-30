@@ -188,3 +188,31 @@ This command streamlines the process of adding new domains to your application, 
 ---
 
 
+## README Update
+
+### `devkit new feature`
+
+This command generates a new feature within a specified domain in your Go backend application.
+
+**Usage:**
+
+```bash
+devkit new feature [feature-name] --domain [domain-name]
+```
+
+*   `feature-name`: The name of the feature you want to create.
+*   `--domain`: The name of the existing domain where this feature belongs.
+
+**Functionality:**
+
+1.  **File Generation:** Creates new files within the specified domain's subdirectories:
+    *   `adapter`: `[feature-name]_adapter.go`
+    *   `repo`: `[feature-name]_repo.go`
+    *   `usecase`: `[feature-name]_usecase.go`
+    *   `proto`: `[domain-name]_[feature-name].proto` (in the `proto` directory)
+    *   `query`: `[domain-name]_[feature-name].sql` (in the `supabase/queries` directory)
+    *   `api`: `[domain-name]_[feature-name]_rpc.go` (in the `api` directory)
+2.  **Boilerplate Code:** Populates the generated files with basic Go code relevant to the feature.
+3.  **Proto Integration:** Updates the domain's service proto file (`[domain-name]_service.proto`) to import the new feature's proto definition.
+
+This command automates the process of adding new features to your application's domains, ensuring consistency and reducing manual effort. You can then customize the generated code to implement the specific logic for your feature.

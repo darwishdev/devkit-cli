@@ -13,26 +13,37 @@ import (
 type DomainTemplateData struct {
 	config.ProjectConfig
 	DomainName      string
+	BaseDomainPath  string
 	BasePath        string
 	DomainNameLower string
 	UsecaseName     string
+}
+
+func (c *NewCmd) GetDomainTemplateData(domainName string) (*DomainTemplateData, error) {
+	projectConfig, err := c.config.GetProjectConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &DomainTemplateData{
+		ProjectConfig:   *projectConfig,
+		DomainNameLower: domainName,
+		DomainName:      strcase.ToCamel(domainName),
+		UsecaseName:     fmt.Sprintf("%sUsecase", strcase.ToLowerCamel(domainName)),
+		BaseDomainPath:  fmt.Sprintf("github.com/%s/%s/app/%s", projectConfig.GitUser, projectConfig.AppName, domainName),
+		BasePath:        fmt.Sprintf("github.com/%s/%s", projectConfig.GitUser, projectConfig.AppName),
+	}, nil
+
 }
 
 // This command creates a new domain within your Go backend application
 // by generating the necessary files and directory structure.
 func (c *NewCmd) NewDomain(args []string, flags *pflag.FlagSet) {
 	domainName := args[0]
-	projectConfig, err := c.config.GetProjectConfig()
+	templateData, err := c.GetDomainTemplateData(domainName)
 	if err != nil {
 		log.Err(err).Msg("failed to get the project config")
 		os.Exit(1)
-	}
-	templateData := DomainTemplateData{
-		ProjectConfig:   *projectConfig,
-		DomainNameLower: domainName,
-		DomainName:      strcase.ToCamel(domainName),
-		UsecaseName:     fmt.Sprintf("%sUsecase", strcase.ToLowerCamel(domainName)),
-		BasePath:        fmt.Sprintf("github.com/%s/%s", projectConfig.GitUser, projectConfig.AppName),
 	}
 	domainTemplates, err := c.templateUtils.LoadLayerTemplates(fmt.Sprintf("domain*"), templateData)
 	if err != nil {

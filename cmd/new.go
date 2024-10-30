@@ -19,8 +19,10 @@ func (c *Command) getNewCmd() *cobra.Command {
 
 	apiCmd := c.getApiCmd()
 	domainCmd := c.getDomainCmd()
+	featureCmd := c.geFeatureCmd()
 	newCmd.AddCommand(apiCmd)
 	newCmd.AddCommand(domainCmd)
+	newCmd.AddCommand(featureCmd)
 	return newCmd
 
 }

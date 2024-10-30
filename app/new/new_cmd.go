@@ -10,6 +10,7 @@ import (
 
 type NewCmdInterface interface {
 	NewApi(args []string, flags *pflag.FlagSet)
+	NewFeature(args []string, flags *pflag.FlagSet)
 	NewDomain(args []string, flags *pflag.FlagSet)
 }
 type NewCmd struct {

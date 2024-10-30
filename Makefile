@@ -21,7 +21,7 @@ new_api:
 new_endpoint:
 	 make build && cd example && ../devkit new endpoint accounts roles create_update
 new_feature:
-	 make build && cd example && ../devkit new feature accounts roles
+	 make build && cd new_fork && ../devkit new feature categories -d products
 new_domain:
 	make build && cd new_fork && rm -rf app/products && ../devkit new domain products
 download_cli:
