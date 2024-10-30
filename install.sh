@@ -13,7 +13,7 @@ echo "Extracting files..."
 unzip devkit-cli-refs.tags.$RELEASE_TAG.zip 
 
 echo "Setting up the installation directory..."
-mkdir -p ~/devkitcli ~/.config/devkitcli && cp -r release/* ~/devkitcli/
+mkdir -p ~/devkitcli ~/.config/devkitcli && cp -r release/* ~/devkitcli/ && rm -rf release
 echo "adding the placeholders on config files"
 cat <<EOL > ~/.config/devkitcli/devkit
 GIT_USER=yourgituser

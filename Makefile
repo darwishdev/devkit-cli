@@ -6,7 +6,8 @@ pushmain:
 
 pushv:
 	git tag $(TAG) && git push origin $(TAG)
-
+cleancli:
+	rm -rf ~/devkitcli/ ~/.config/devkitcli/
 build : 
 	go build -o devkit
 clean:
