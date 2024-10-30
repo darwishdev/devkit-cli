@@ -132,4 +132,59 @@ devkit init
 
 ---
 
+```go
+// getDomainCmd returns the cobra command for 'devkit new domain'.
+// This command creates a new domain within your Go backend application
+// by generating the necessary files and directory structure.
+func (c *Command) getDomainCmd() *cobra.Command {
+	apiCmd := &cobra.Command{
+		Use:   "domain [domain_name]",
+		Short: "Create a new domain in your application.",
+		Long: `The 'domain' command generates a new domain within your Go backend application.
+It creates the necessary directory structure (adapter, repo, usecase) and 
+populates them with boilerplate code for the given domain name.`,
+		Args: cobra.ExactArgs(1), // Ensure exactly one argument (domain_name) is provided
+		Run: func(cmd *cobra.Command, args []string) {
+			c.newCmd.NewDomain(args, cmd.Flags())
+		},
+	}
+
+	apiCmd.Flags().StringP("org", "o", "", "GitHub organization to fork the repository to. If not provided, defaults to the configured Git user.")
+	apiCmd.Flags().StringP("buf-user", "b", "", "Buf.build username for pushing API documentation. If not provided, defaults to the configured Buf user.")
+
+	return apiCmd
+}
+```
+
+## README Update
+
+### `devkit new domain`
+
+This command generates a new domain within your Go backend application.
+
+**Usage:**
+
+```bash
+devkit new domain [domain-name]
+```
+
+*   `domain-name`: The name of the domain you want to create.
+
+**Functionality:**
+
+1.  **Directory Creation:** Creates a new directory named under app/`domain-name`.
+2.  **Subdirectory Generation:** Creates three subdirectories within the domain directory:
+    *   `adapter`: For code related to external interactions (e.g., database, external APIs).
+    *   `repo`: For data access and persistence logic.
+    *   `usecase`: For business logic and application-specific rules.
+3.  **Boilerplate Code:** Populates the subdirectories with basic Go code files:
+    *   `adapter.go`, `repo.go`, `usecase.go`
+4.  **API Integration:** Updates the `api/api.go` file to include the new domain's use case:
+    *   Adds necessary imports, fields, instantiations, and dependency injections.
+
+This command streamlines the process of adding new domains to your application, providing a structured foundation and reducing boilerplate code. You can then customize the generated code to implement the specific logic for your domain.
+
+
+---
+
 

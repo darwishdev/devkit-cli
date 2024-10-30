@@ -25,7 +25,7 @@ func main() {
 	}
 	cliConfig := appConfig.GetCliConfig()
 	fileUtils := fileutils.NewFileUtils()
-	templateUtils := templates.NewTemplates()
+	templateUtils := templates.NewTemplates("tmpls")
 	sqlSeeder := sqlseeder.NewSeeder(sqlseeder.SeederConfig{
 		HashFunc: func(pass string) string {
 			password, _ := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)

@@ -13,9 +13,13 @@ import (
 type DomainTemplateData struct {
 	config.ProjectConfig
 	DomainName      string
+	BasePath        string
 	DomainNameLower string
+	UsecaseName     string
 }
 
+// This command creates a new domain within your Go backend application
+// by generating the necessary files and directory structure.
 func (c *NewCmd) NewDomain(args []string, flags *pflag.FlagSet) {
 	domainName := args[0]
 	projectConfig, err := c.config.GetProjectConfig()
@@ -27,12 +31,18 @@ func (c *NewCmd) NewDomain(args []string, flags *pflag.FlagSet) {
 		ProjectConfig:   *projectConfig,
 		DomainNameLower: domainName,
 		DomainName:      strcase.ToCamel(domainName),
+		UsecaseName:     fmt.Sprintf("%sUsecase", strcase.ToLowerCamel(domainName)),
+		BasePath:        fmt.Sprintf("github.com/%s/%s", projectConfig.GitUser, projectConfig.AppName),
 	}
-	log.Debug().Interface("template data", templateData).Msg("temp data")
-	os.Exit(1)
-	adapterFolder := fmt.Sprintf("%s/adapter", c.basePath)
-	repoFolder := fmt.Sprintf("%s/repo", c.basePath)
-	usecaseFolder := fmt.Sprintf("%s/usecase", c.basePath)
+	domainTemplates, err := c.templateUtils.LoadLayerTemplates(fmt.Sprintf("domain*"), templateData)
+	if err != nil {
+		log.Err(err).Msg("error getting the template for the domain")
+		os.Exit(1)
+	}
+
+	adapterFolder := fmt.Sprintf("%s/%s/adapter", c.basePath, domainName)
+	repoFolder := fmt.Sprintf("%s/%s/repo", c.basePath, domainName)
+	usecaseFolder := fmt.Sprintf("%s/%s/usecase", c.basePath, domainName)
 	domainDirs := map[string]string{
 		"adapter": adapterFolder,
 		"repo":    repoFolder,
@@ -48,7 +58,6 @@ func (c *NewCmd) NewDomain(args []string, flags *pflag.FlagSet) {
 			}
 		}
 	}
-
 	domainFiles := map[string]string{
 		"adapter": fmt.Sprintf("%s/adapter.go", adapterFolder),
 		"repo":    fmt.Sprintf("%s/repo.go", repoFolder),
@@ -56,12 +65,32 @@ func (c *NewCmd) NewDomain(args []string, flags *pflag.FlagSet) {
 	}
 
 	for key, fileName := range domainFiles {
-		_, err := os.Create(fileName)
+		file, err := os.Create(fileName)
 		if err != nil {
 			fmt.Println("Error creating:", key, err)
 			os.Exit(1)
 		}
 
+		template, ok := domainTemplates[key]
+		if ok {
+			_, err = file.Write(template.Bytes())
+			if err != nil {
+				fmt.Println("Error adding base content for:", key, err)
+				os.Exit(1)
+			}
+		}
+
 	}
-	log.Debug().Str("str", "new domain from domain").Msg("domain")
+	usecaseImport, _ := domainTemplates["import"]
+	usecaseField, _ := domainTemplates["field"]
+	usecaseInstantiation, _ := domainTemplates["instantiation"]
+	usecaseInjection, _ := domainTemplates["injection"]
+	err = c.fileUtils.ReplaceMultiple("api/api.go", map[string]string{
+		"// USECASE_IMPORTS":        fmt.Sprintf("// USECASE_IMPORTS\n%s", usecaseImport.String()),
+		"// USECASE_FIELDS":         fmt.Sprintf("// USECASE_FIELDS\n%s", usecaseField.String()),
+		"// USECASE_INSTANTIATIONS": fmt.Sprintf("// USECASE_INSTANTIATIONS\n%s", usecaseInstantiation.String()),
+		"// USECASE_INJECTIONS":     fmt.Sprintf("// USECASE_INJECTIONS\n%s", usecaseInjection.String()),
+	})
+	log.Info().Interface("tmpls", domainTemplates).Msg("domain")
+	log.Info().Str("str", "new domain from domain").Msg("domain")
 }

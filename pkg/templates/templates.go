@@ -23,7 +23,7 @@ func NewTemplates(basePath string) TemplatesInterface {
 	if err != nil {
 		panic(err)
 	}
-	execPathDir := filepath.Base(exePath)
+	execPathDir := filepath.Dir(exePath)
 	path := fmt.Sprintf("%s/%s", execPathDir, basePath)
 	return &Templates{
 		basePath: path,
@@ -48,7 +48,7 @@ func (t *Templates) LoadTemplate(path string, data interface{}) (bytes.Buffer, e
 
 func (t *Templates) LoadLayerTemplates(pattern string, data interface{}) (map[string]bytes.Buffer, error) {
 	result := make(map[string]bytes.Buffer)
-	matches, err := filepath.Glob(fmt.Sprintf("%s%s", t.basePath, pattern))
+	matches, err := filepath.Glob(fmt.Sprintf("%s/%s", t.basePath, pattern))
 	if err != nil {
 		return nil, err
 	}
