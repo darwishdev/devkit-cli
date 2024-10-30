@@ -10,7 +10,7 @@ echo "Downloading devkit-cli version $RELEASE_TAG..."
 wget https://github.com/darwishdev/devkit-cli/releases/download/$RELEASE_TAG/devkit-cli-refs.tags.$RELEASE_TAG.zip
 
 echo "Extracting files..."
-unzip devkit-cli-refs.tags.$RELEASE_TAG.zip 
+unzip devkit-cli-refs.tags.$RELEASE_TAG.zip > /dev/null
 
 echo "Setting up the installation directory..."
 mkdir -p ~/devkitcli ~/.config/devkitcli && cp -r release/* ~/devkitcli/ && rm -rf release
@@ -28,8 +28,9 @@ RESEND_API_KEY=resend_key
 EOL
 echo "Creating configuration file..."
 touch ~/.config/devkitcli/devkit
+echo "Creating the symlink"
+sudo ln -s $HOME/.config/devkitcli/devkit  $HOME/devkitcli/devkit.env
 
-sudo ln -s $HOME/devkitcli/devkit /usr/local/bin/devkit.env
 
 echo "devkit-cli installed successfully! try devkit -h"
 
