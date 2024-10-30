@@ -22,7 +22,7 @@ jobs:
         run: go build -o build/devkit
 
       - name: Create release directory
-        run: mkdir  release && cp build/devkit release/ && cp -r tmpls/ release/  
+        run: mkdir -p release && cp build/devkit release/ && cp -r tmpls/ release/  
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
