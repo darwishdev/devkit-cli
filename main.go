@@ -1,10 +1,41 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
 package main
 
-import "github.com/darwishdev/devkit-cli/cmd"
+import (
+	"context"
+	"os"
+
+	"github.com/darwishdev/devkit-cli/app/new"
+	"github.com/darwishdev/devkit-cli/cmd"
+	"github.com/darwishdev/devkit-cli/pkg/config"
+	"github.com/darwishdev/devkit-cli/pkg/fileutils"
+	"github.com/darwishdev/devkit-cli/pkg/gitclient"
+	"github.com/darwishdev/devkit-cli/pkg/templates"
+	"github.com/darwishdev/sqlseeder"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"golang.org/x/crypto/bcrypt"
+)
 
 func main() {
-	cmd.Execute()
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	appConfig, err := config.NewConfig("./", "devkit", "./devkit.yaml")
+	if err != nil {
+		panic(err)
+	}
+	cliConfig := appConfig.GetCliConfig()
+	fileUtils := fileutils.NewFileUtils()
+	templateUtils := templates.NewTemplates()
+	sqlSeeder := sqlseeder.NewSeeder(sqlseeder.SeederConfig{
+		HashFunc: func(pass string) string {
+			password, _ := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
+			return string(password)
+
+		},
+	})
+	log.Debug().Interface("clieCOnfig", cliConfig).Msg("main")
+	gitClient := gitclient.NewGitClientRepo(context.Background(), cliConfig.GithubToken)
+	newCmd := new.NewNewCmd(appConfig, fileUtils, templateUtils, gitClient)
+	command := cmd.NewCommand(appConfig, newCmd, fileUtils, templateUtils, sqlSeeder, gitClient)
+	command.Execute()
 }

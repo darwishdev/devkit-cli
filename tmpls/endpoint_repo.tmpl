@@ -1,0 +1,8 @@
+func (repo *{{.DomainName}}Repo) {{.EndpointName}}(ctx context.Context, req db.{{.EndpointName}}Params) ({{.RepoReturnType}}, error) {
+	resp, err := repo.store.{{.EndpointName}}(ctx, req)
+	if err != nil {
+		return nil, repo.store.DbErrorParser(err, repo.errorHandler)
+	}
+
+	return resp, nil
+}

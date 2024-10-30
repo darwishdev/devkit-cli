@@ -7,4 +7,6 @@
 *.out
 go.work
 build
+devkit.env
+devkit.yaml
 go.work.sum

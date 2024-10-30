@@ -1,4 +1,6 @@
 
+run:
+	go run main.go
 pushmain:
 	git add . && git commit -m "$(MSG)" && git push 
 
@@ -6,7 +8,7 @@ pushv:
 	git tag $(TAG) && git push origin $(TAG)
 
 build : 
-	go build 
+	go build -o devkit
 clean:
 	cd example && rm -rf app api proto sup*
 init:
@@ -14,12 +16,12 @@ init:
 init_dirs:
 	cd example && mkdir -p app api proto/devkit/v1 supabase/queries && cp ../service.proto proto/devkit/v1/devkit_service.proto && cp ../api_template.txt api/api.go
 new_api:
-	rm -rf new_fork &&	make build &&  ./devkit-cli new api new_fork esolveeg buf.build/ahmeddarwish && cp devkit.yaml new_fork/
+	rm -rf new_fork && make build &&  ./devkit new api new_fork --org esolveeg  
 new_endpoint:
-	 make build && cd example && ../devkit-cli new endpoint accounts roles create_update
+	 make build && cd example && ../devkit new endpoint accounts roles create_update
 new_feature:
-	 make build && cd example && ../devkit-cli new feature accounts roles
+	 make build && cd example && ../devkit new feature accounts roles
 new_domain:
-	make build && cd example && rm -rf app/accounts && ../devkit-cli new domain accounts
+	make build && cd example && rm -rf app/accounts && ../devkit new domain accounts
 endpoint_test:
 	make build && make clean init_dirs new_domain new_feature new_endpoint

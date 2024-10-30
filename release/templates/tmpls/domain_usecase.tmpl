@@ -1,0 +1,26 @@
+package usecase
+
+import (
+        "{{.BasePath}}/db"
+        "{{.BasePath}}/proto_gen/{{.ApiServiceName}}/{{.ApiVersion}}"
+        "{{.BasePath}}/app/{{.DomainNameLower}}/repo"
+        "{{.BasePath}}/app/{{.DomainNameLower}}/adapter"
+)
+
+type {{.DomainName}}UsecaseInterface interface {
+     // INJECT INTERFACE
+}
+
+type {{.DomainName}}Usecase struct {
+	store       db.Store
+	adapter     adapter.{{.DomainName}}AdapterInterface
+	repo        repo.{{.DomainName}}RepoInterface
+}
+
+func New{{.DomainName}}Usecase(store db.Store) {{.DomainName}}UsecaseInterface {
+	return &{{.DomainName}}Usecase{
+		store:       store,
+		adapter:     adapter.New{{.DomainName}}Adapter(),
+		repo:        repo.New{{.DomainName}}Repo(store),
+	}
+}
