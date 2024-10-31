@@ -11,6 +11,7 @@ import (
 
 type SeedCmdInterface interface {
 	NewSeed(args []string, flags *pflag.FlagSet)
+	StorageSeed(flags *pflag.FlagSet)
 }
 type SeedCmd struct {
 	config     config.ConfigInterface

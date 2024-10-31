@@ -20,9 +20,11 @@ func (c *Command) getSeedCmd() *cobra.Command {
 	}
 	cmd.Flags().StringP("file-path", "f", "", "Path to the data file (required)")
 	cmd.Flags().StringP("out-file", "o", "", "Path to the output SQL file (optional)")
-	cmd.Flags().BoolP("skip-supabase", "e", false, "Execute the generated SQL (optional)")
+	cmd.Flags().BoolP("skip-supabase", "s", false, "Execute the generated SQL (optional)")
 	cmd.Flags().BoolP("execute", "e", false, "Execute the generated SQL (optional)")
-
 	cmd.MarkFlagRequired("file-path")
+
+	storageCmd := c.getSstorageCmd()
+	cmd.AddCommand(storageCmd)
 	return cmd
 }

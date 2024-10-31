@@ -61,6 +61,8 @@ func (c *SeedCmd) NewSeed(args []string, flags *pflag.FlagSet) {
 
 	if isExecute {
 		db, err := c.dbUtils.Open(conf.DBSource)
+		defer db.Close()
+
 		if err != nil {
 			log.Err(err).Str("source", conf.DBSource).Msg("can't connect to the database")
 			os.Exit(1)

@@ -1,6 +1,9 @@
 package db
 
-import "database/sql"
+import (
+	"database/sql"
+	_ "github.com/lib/pq"
+)
 
 type DbInterface interface {
 	Open(dbSource string) (*sql.DB, error)
@@ -17,7 +20,6 @@ func (d *Db) Open(dbSource string) (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
 	err = db.Ping()
 	if err != nil {
 		return nil, err

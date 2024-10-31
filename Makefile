@@ -26,6 +26,8 @@ new_domain:
 	make build && cd new_fork && rm -rf app/products && ../devkit new domain products
 download_cli:
 	curl -sSL https://raw.githubusercontent.com/darwishdev/devkit-cli/refs/heads/main/install.sh | bash
+seed_storage:
+	make build && cd new_fork && ../devkit seed storage -f assets -i icons
 seed:
 	make build && cd new_fork && ../devkit seed accounts_schema --file-path accounts.xlsx --out-file q.sql
 endpoint_test:

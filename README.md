@@ -298,3 +298,42 @@ devkit seed accounts_schema --file-path accounts.xlsx --execute --skip-supabase
 ```
 
 This command simplifies database seeding and integrates with Supabase Auth for easier user management in your projects.his command significantly simplifies the process of seeding your database, especially when dealing with complex relationships and data transformations. It leverages the (`sqlseeder`)[https://github.com/darwishdev/sqlseeder] package  to handle the intricacies of SQL generation and relationship mapping.
+
+---
+
+### `devkit seed storage`
+
+This command seeds Supabase storage with files and icons from specified paths.
+
+**Usage:**
+
+```bash
+devkit seed storage --files-path [files_path] --icons-path [icons_path]
+```
+
+*   `--files-path`: The path to the folder containing your images and files. This is required if `--icons-path` is not provided.
+*   `--icons-path`: The path to the folder containing your SVG icons. This is required if `--files-path` is not provided.
+
+**Functionality:**
+
+1.  **Bucket Creation:** Creates buckets in Supabase storage based on the subfolder structure in the `files-path`. For example, if `files-path` is `assets`, and `assets` has subfolders `images` and `documents`, the command will create buckets named `images` and `documents`.
+2.  **File Upload:** Uploads the files from each subfolder in `files-path` to their corresponding buckets in Supabase storage.
+3.  **Icon Insertion:** If `--icons-path` is provided, the command reads all SVG files from that path and inserts their content into the `icons` table in your database. Each icon's name is derived from its filename.
+
+**Example:**
+
+To seed Supabase storage with files from the `assets` folder:
+
+```bash
+devkit seed storage --files-path assets
+```
+
+To seed Supabase storage with files from the `assets` folder and icons from the `svg-icons` folder:
+
+```bash
+devkit seed storage --files-path assets --icons-path svg-icons
+```
+
+This command provides a convenient way to populate your Supabase storage with files and icons, automating the process of bucket creation and file uploads.
+
+---
