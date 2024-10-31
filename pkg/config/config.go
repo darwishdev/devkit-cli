@@ -34,6 +34,7 @@ type ProjectConfig struct {
 	DBProjectREF           string `mapstructure:"DB_PROJECT_REF"`
 	SupabaseServiceRoleKey string `mapstructure:"SUPABASE_SERVICE_ROLE_KEY"`
 	SupabaseApiKey         string `mapstructure:"SUPABASE_API_KEY"`
+	DBPort                 uint32 `mapstructure:"DB_PORT"`
 	DBSource               string `mapstructure:"DB_SOURCE"`
 	AppName                string `mapstructure:"APP_NAME"`
 	ApiFilePath            string `mapstructure:"API_FILE_PATH"`
@@ -107,6 +108,7 @@ func (c *Config) InitProjectConfig() error {
 	v.Set("API_SERVICE_NAME", c.CliConfing.ApiServiceName)
 	v.Set("API_VERSION", c.CliConfing.ApiVersion)
 	v.Set("ENVIRONMENT", "dev")
+	v.Set("DB_PORT", 54321)
 	v.Set("DB_PROJECT_REF", "")
 	v.Set("SUPABASE_SERVICE_ROLE_KEY", "")
 	v.Set("SUPABASE_API_KEY", "")

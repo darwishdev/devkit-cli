@@ -25,6 +25,7 @@ func (c *SeedCmd) NewSeed(args []string, flags *pflag.FlagSet) {
 
 	outFile, _ := flags.GetString("out-file")
 	isExecute, _ := flags.GetBool("execute")
+	isSkipSupabase, _ := flags.GetBool("skip-supabase")
 	file, buffer, err := c.fileUtils.ReadExcelFile(filePath)
 	if err != nil {
 		log.Err(err).Msg("file path not passed")
@@ -44,6 +45,18 @@ func (c *SeedCmd) NewSeed(args []string, flags *pflag.FlagSet) {
 			os.Exit(1)
 		}
 		fullSqlQuery += fmt.Sprintf("\n%s\n", queryString)
+		if sheetName == "users" && !isSkipSupabase {
+			rows, err := file.GetRows(sheetName)
+			if err != nil {
+				log.Err(err).Msg("can't get users sheet rows")
+				os.Exit(1)
+			}
+			err = c.supaClient.UsersCreateUpdate(conf, rows)
+			if err != nil {
+				log.Err(err).Msg("can't insert users on supabase")
+				os.Exit(1)
+			}
+		}
 	}
 
 	if isExecute {

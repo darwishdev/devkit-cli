@@ -11,6 +11,7 @@ import (
 	"github.com/darwishdev/devkit-cli/pkg/db"
 	"github.com/darwishdev/devkit-cli/pkg/fileutils"
 	"github.com/darwishdev/devkit-cli/pkg/gitclient"
+	"github.com/darwishdev/devkit-cli/pkg/supabase"
 	"github.com/darwishdev/devkit-cli/pkg/templates"
 	"github.com/darwishdev/sqlseeder"
 	"github.com/rs/zerolog"
@@ -37,7 +38,8 @@ func main() {
 	})
 	gitClient := gitclient.NewGitClientRepo(context.Background(), cliConfig.GithubToken)
 	dbUtils := db.NewDb()
-	seedCmd := seed.NewSeedCmd(appConfig, fileUtils, sqlSeeder, dbUtils)
+	supaClient := supabase.NewSupabaseClient()
+	seedCmd := seed.NewSeedCmd(appConfig, fileUtils, sqlSeeder, dbUtils, supaClient)
 	newCmd := new.NewNewCmd(appConfig, fileUtils, templateUtils, gitClient, dbUtils)
 	command := cmd.NewCommand(appConfig, newCmd, seedCmd)
 	command.Execute()

@@ -250,9 +250,10 @@ This command further automates the development process by generating endpoints w
 
 ---
 
+
 ### `devkit seed`
 
-This command automates the process of seeding your database tables with data from an Excel file.
+This command automates the process of seeding your database tables with data from an Excel file and optionally creates users in Supabase Auth.
 
 **Usage:**
 
@@ -264,6 +265,7 @@ devkit seed [schema_name] --file-path [excel_file_path]
 *   `--file-path`: The path to the Excel file containing the data.
 *   `--out-file`: (Optional) The path to the output SQL file. If not provided, the SQL will be printed to the console.
 *   `--execute`: (Optional) If enabled, the generated SQL will be executed against the configured database.
+*   `--skip-supabase`: (Optional) If enabled, the command will skip creating users in Supabase Auth.
 
 **Functionality:**
 
@@ -271,8 +273,9 @@ devkit seed [schema_name] --file-path [excel_file_path]
 2.  **SQL Generation:** Generates SQL insert statements for each sheet, mapping the sheet name to the table name in the specified schema.
 3.  **Relationship Handling:** Automatically handles one-to-many and many-to-many relationships between tables.
 4.  **Hashing:** Hashes password columns automatically (columns with names ending in `(#)`).
-5.  **Output:** Prints the generated SQL to the console or saves it to a file.
-6.  **Execution:** Optionally executes the SQL against the configured database.
+5.  **Supabase Auth:** If the Excel file contains a sheet named "users", the command will create users in Supabase Auth with the data from that sheet, unless the `--skip-supabase` flag is enabled.
+6.  **Output:** Prints the generated SQL to the console or saves it to a file.
+7.  **Execution:** Optionally executes the SQL against the configured database.
 
 **Column Mapping:**
 
@@ -282,16 +285,16 @@ devkit seed [schema_name] --file-path [excel_file_path]
 
 **Example:**
 
-To seed the `accounts_schema` from an Excel file named `accounts.xlsx` and save the generated SQL to a file named `q.sql`:
+To seed the `accounts_schema` from an Excel file named `accounts.xlsx`, create users in Supabase Auth, and save the generated SQL to a file named `q.sql`:
 
 ```bash
 devkit seed accounts_schema --file-path accounts.xlsx --out-file q.sql
 ```
 
-To seed the same schema and execute the SQL directly:
+To seed the same schema, skip Supabase Auth, and execute the SQL directly:
 
 ```bash
-devkit seed accounts_schema --file-path accounts.xlsx --execute
+devkit seed accounts_schema --file-path accounts.xlsx --execute --skip-supabase
 ```
 
-This command significantly simplifies the process of seeding your database, especially when dealing with complex relationships and data transformations. It leverages the `sqlseeder` package  to handle the intricacies of SQL generation and relationship mapping.
+This command simplifies database seeding and integrates with Supabase Auth for easier user management in your projects.his command significantly simplifies the process of seeding your database, especially when dealing with complex relationships and data transformations. It leverages the (`sqlseeder`)[https://github.com/darwishdev/sqlseeder] package  to handle the intricacies of SQL generation and relationship mapping.
