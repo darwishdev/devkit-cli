@@ -216,3 +216,34 @@ devkit new feature [feature-name] --domain [domain-name]
 3.  **Proto Integration:** Updates the domain's service proto file (`[domain-name]_service.proto`) to import the new feature's proto definition.
 
 This command automates the process of adding new features to your application's domains, ensuring consistency and reducing manual effort. You can then customize the generated code to implement the specific logic for your feature.
+
+---
+
+### `devkit new endpoint`
+
+This command generates a new endpoint within a specified feature and domain in your Go backend application.
+
+**Usage:**
+
+```bash
+devkit new endpoint [endpoint-name] --domain [domain-name] --feature [feature-name]
+```
+
+*   `endpoint-name`: The name of the endpoint you want to create.
+*   `--domain`: The name of the existing domain where this endpoint belongs.
+*   `--feature`: The name of the existing feature within the domain where this endpoint belongs.
+*   `--get`: (Optional) If enabled, this endpoint will be marked as having no side effects, and the REST endpoint will be of type GET.
+*   `--empty-response`: (Optional) If enabled, this endpoint will return an empty response.
+*   `--empty-request`: (Optional) If enabled, this endpoint will accept an empty request.
+*   `--list`: (Optional) If enabled, this endpoint will return a set of records; if disabled, it will use a single record, except for endpoints with the term 'list' in their name.
+
+**Functionality:**
+
+1.  **Code Generation:** Updates various files with the necessary code for the new endpoint:
+    *   Appends code to existing `adapter`, `repo`, `usecase`, `proto`, `query`, and `api` files within the specified domain and feature.
+    *   Injects interfaces and methods into `adapter/adapter.go`, `usecase/usecase.go`, `proto/[api-service-name]_service.proto`, and `repo/repo.go`.
+2.  **Boilerplate Code:** Provides basic Go code relevant to the endpoint, including request/response handling, database interaction, and business logic.
+3.  **Proto Integration:** Adds the new endpoint to the domain's service proto file (`[domain-name]_service.proto`).
+4.  **Query Generation:** Creates a SQL query file (`[domain-name]_[feature-name].sql`) for the endpoint's database interaction.
+
+This command further automates the development process by generating endpoints with predefined structures and best practices. You can then customize the generated code to implement the specific logic for your endpoint.

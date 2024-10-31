@@ -1,8 +1,11 @@
-func (repo *{{.DomainName}}Repo) {{.EndpointName}}(ctx context.Context, req db.{{.EndpointName}}Params) ({{.RepoReturnType}}, error) {
+func (repo *{{.DomainName}}Repo) {{.EndpointName}}(ctx context.Context{{if not .IsEmptyRequest}}, req {{.RepoRequestType}}{{end}}) {{if .IsEmptyResponse}}error{{else}}({{.RepoReturnType}} , error){{end}} {
+	{{if .IsEmptyRequest}}
+	resp, err := repo.store.{{.EndpointName}}(ctx)
+	{{else}}
 	resp, err := repo.store.{{.EndpointName}}(ctx, req)
+	{{end}}
 	if err != nil {
-		return nil, repo.store.DbErrorParser(err, repo.errorHandler)
+		return  {{if not .IsEmptyResponse}}nil, {{end}}repo.store.DbErrorParser(err, repo.errorHandler)
 	}
-
-	return resp, nil
+	return {{if not .IsEmptyResponse}}resp, nil{{else}}nil{{end}}
 }

@@ -1,6 +1,8 @@
 package new
 
 import (
+	"fmt"
+
 	"github.com/darwishdev/devkit-cli/pkg/config"
 	"github.com/darwishdev/devkit-cli/pkg/fileutils"
 	"github.com/darwishdev/devkit-cli/pkg/gitclient"
@@ -10,7 +12,9 @@ import (
 
 type NewCmdInterface interface {
 	NewApi(args []string, flags *pflag.FlagSet)
+	getServiceFilePath(serviceName, version string) string
 	NewFeature(args []string, flags *pflag.FlagSet)
+	NewEndpoint(args []string, flags *pflag.FlagSet)
 	NewDomain(args []string, flags *pflag.FlagSet)
 }
 type NewCmd struct {
@@ -18,7 +22,8 @@ type NewCmd struct {
 	fileUtils     fileutils.FileUtilsInterface
 	templateUtils templates.TemplatesInterface
 	gitClient     gitclient.GitClientInterface
-	basePath      string
+
+	basePath string
 }
 
 func NewNewCmd(config config.ConfigInterface, fileUtils fileutils.FileUtilsInterface, templateUtils templates.TemplatesInterface, gitClient gitclient.GitClientInterface) NewCmdInterface {
@@ -29,4 +34,9 @@ func NewNewCmd(config config.ConfigInterface, fileUtils fileutils.FileUtilsInter
 		gitClient:     gitClient,
 		basePath:      "app",
 	}
+}
+
+func (c *NewCmd) getServiceFilePath(serviceName, version string) string {
+	return fmt.Sprintf("proto/%s/%s/%s_service.proto", serviceName, version, serviceName)
+
 }

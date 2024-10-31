@@ -1,1 +1,1 @@
-{{.EndpointName}}(ctx context.Context, req db.{{.EndpointName}}Params) ({{.RepoReturnType}}, error) 
+{{.EndpointName}}(ctx context.Context{{if not .IsEmptyRequest}}, req {{.RepoRequestType}}{{end}}) {{if .IsEmptyResponse}}error{{else}}({{.RepoReturnType}} , error){{end}} 

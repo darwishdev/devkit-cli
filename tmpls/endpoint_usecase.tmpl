@@ -1,18 +1,29 @@
 
-func (u *{{.DomainName}}Usecase) {{.EndpointName}}(ctx context.Context, req *{{.ApiServiceName}}{{.ApiVersion}}.{{.EndpointName}}Request) (*{{.ApiServiceName}}{{.ApiVersion}}.{{.EndpointName}}Response, error) {
-	req, err := u.adapter.{{.EndpointName}}SqlFromGrpc(record)
+func (u *{{.DomainName}}Usecase) {{.EndpointName}}(ctx context.Context{{if not .IsEmptyRequest}}, req {{.ApiRequestType}}{{end}}) ({{if .IsEmptyResponse}}error{{else}}*{{.ApiReturnType}}, error{{end}}) {
+	{{if not .IsEmptyRequest}}
+	params, err := u.adapter.{{.EndpointName}}SqlFromGrpc(record)
+		if err != nil {
+			return nil, err
+		}
+	{{end}}
+	{{if .IsEmptyRequest}}
+	record, err := u.repo.{{.EndpointName}}(ctx)
+	{{else}}
+	record, err := u.repo.{{.EndpointName}}(ctx, sqlReq)
+	{{end}}
 	if err != nil {
-		return nil, err
+		return {{if not .IsEmptyResponse}}nil, {{end}}err
 	}
-	record, err := u.repo.{{.EndpointName}}(ctx , req)
-	if err != nil {
-		return nil, err
-	}
+	{{if .IsEmptyResponse}}
+	return nil
+	{{else}}
+
 	resp, err := u.adapter.{{.EndpointName}}GrpcFromSql(record)
 	if err != nil {
 		return nil, err
 	}
 	return resp, nil
+	{{end}}
 }
 
 

@@ -1,12 +1,14 @@
-func (a *PublicAdapter) {{.EndpointName}}SqlFromGrpc(req *{{.ApiServiceName}}{{.ApiVersion}}.{{.EndpointName}}Request) *db.{{.EndpointName}}Params {
+{{if not .IsEmptyRequest}}
+func (a *{{.DomainName}}Adapter) {{.EndpointName}}SqlFromGrpc(req {{.ApiRequestType}}) {{.RepoRequestType}} {
 	return &db.{{.EndpointName}}Params{
 	}
 }
+{{end}}
 
-
-
-func (a *PublicAdapter) {{.EndpointName}}GrpcFromSql(resp {{.RepoReturnType}}) *{{.ApiServiceName}}{{.ApiVersion}}.{{.EndpointName}}Response {
-	return &{{.ApiServiceName}}{{.ApiVersion}}.{{.EndpointName}}Response{
+{{if not .IsEmptyResponse}}
+func (a *{{.DomainName}}Adapter) {{.EndpointName}}GrpcFromSql(req {{.RepoReturnType}}) *{{.ApiReturnType}} {
+	return &{{.ApiReturnType}}{
 	}
 
 }
+{{end}}

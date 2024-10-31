@@ -1,2 +1,7 @@
-{{.EndpointName}}GrpcFromSql(resp {{.RepoReturnType}}) *{{.ApiServiceName}}{{.ApiVersion}}.{{.EndpointName}}Response 
-{{.EndpointName}}SqlFromGrpc(req *{{.ApiServiceName}}{{.ApiVersion}}.{{.EndpointName}}Request) *db.{{.EndpointName}}Params 
+{{if not .IsEmptyRequest}}
+{{.EndpointName}}SqlFromGrpc(req {{.ApiRequestType}}) {{.RepoRequestType}}
+{{end}}
+
+{{if not .IsEmptyResponse}}
+{{.EndpointName}}GrpcFromSql(req {{.RepoReturnType}}) *{{.ApiReturnType}}
+{{end}}

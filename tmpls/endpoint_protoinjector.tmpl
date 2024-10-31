@@ -1,0 +1,2 @@
+rpc {{.EndpointName}}({{if not .IsEmptyRequest}}{{.EndpointName}}Request{{else}}google.protobuf.Empty{{end}}) returns {{if not .IsEmptyResponse}} {{.EndpointName}}Response {{else}}google.protobuf.Empty{{end}} { {{if .IsNoSideEffect}} google.protobuf.Empty {{end}} }
+

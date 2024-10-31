@@ -1,19 +1,27 @@
-
-
-func (api *Api) {{.EndpointName}}(ctx context.Context, req *connect.Request[{{.ApiServiceName}}{{.ApiVersion}}.{{.EndpointName}}Request]) (*connect.Response[{{.ApiServiceName}}{{.ApiVersion}}.{{.EndpointName}}Response], error) {
+func (api *Api) {{.EndpointName}}(ctx context.Context, req *connect.Request[{{if .IsEmptyRequest}}emptypb.empty {{else}} {{.ApiRequestType}} {{end}}]) (*connect.Response[{{if .IsEmptyResponse}}emptypb.empty {{else}} {{.ApiReturnType}} {{end}}], error) {
 	if err := ctx.Err(); err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
+	{{if not .IsEmptyRequest}}
 	err := api.validator.Validate(req.Msg)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
-
+	{{end}}
+	{{if not .IsEmptyResponse}}
 	resp, err := api.{{.FeatureNameLower}}Usecase.{{.EndpointName}}(ctx, req.Msg)
 	if err != nil {
-		return nil, err
+	     return nil, err
 	}
 	return connect.NewResponse(resp), nil
+	{{else}}
+	err = api.{{.FeatureNameLower}}Usecase.{{.EndpointName}}(ctx, req.Msg)
+	if err != nil {
+	     return nil, err
+	}
+
+	return connect.NewResponse(*emptypb.Empty{}), nil
+	{{end}}
 }
 
 

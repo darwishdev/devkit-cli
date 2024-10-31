@@ -19,7 +19,7 @@ init_dirs:
 new_api:
 	rm -rf new_fork && make build &&  ./devkit new api new_fork --org esolveeg  
 new_endpoint:
-	 make build && cd example && ../devkit new endpoint accounts roles create_update
+	 make build && cd new_fork && ../devkit new endpoint list -d products -f categories
 new_feature:
 	 make build && cd new_fork && ../devkit new feature categories -d products
 new_domain:

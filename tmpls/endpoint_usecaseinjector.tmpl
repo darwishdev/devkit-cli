@@ -1,1 +1,1 @@
-{{.EndpointName}}(ctx context.Context, req *{{.ApiServiceName}}{{.ApiVersion}}.{{.EndpointName}}Request) (*{{.ApiServiceName}}{{.ApiVersion}}.{{.EndpointName}}Response, error) 
+{{.EndpointName}}(ctx context.Context{{if not .IsEmptyRequest}}, req {{.ApiRequestType}}{{end}}) ({{if .IsEmptyResponse}}error{{else}}*{{.ApiReturnType}}, error{{end}}) 

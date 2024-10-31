@@ -16,6 +16,17 @@ type FeatureTemplateData struct {
 	UsecaseName      string
 }
 
+func (c *NewCmd) GetFeatureFiles(domainName string, featureName string, serviceName string, serviceVersion string) map[string]string {
+	basePath := fmt.Sprintf("app/%s", domainName)
+	return map[string]string{
+		"adapter": fmt.Sprintf("%s/adapter/%s_adapter.go", basePath, featureName),
+		"repo":    fmt.Sprintf("%s/repo/%s_repo.go", basePath, featureName),
+		"usecase": fmt.Sprintf("%s/usecase/%s_usecase.go", basePath, featureName),
+		"proto":   fmt.Sprintf("proto/%s/%s/%s_%s.proto", serviceName, serviceVersion, domainName, featureName),
+		"query":   fmt.Sprintf("supabase/queries/%s_%s.sql", domainName, featureName),
+		"api":     fmt.Sprintf("api/%s_%s_rpc.go", domainName, featureName),
+	}
+}
 func (c *NewCmd) GetFeatureTemplateData(domainName string, featureName string) (*FeatureTemplateData, error) {
 	domainTemplateData, err := c.GetDomainTemplateData(domainName)
 	if err != nil {
@@ -54,15 +65,7 @@ func (c *NewCmd) NewFeature(args []string, flags *pflag.FlagSet) {
 		os.Exit(1)
 	}
 
-	basePath := fmt.Sprintf("app/%s", domainName)
-	featureFiles := map[string]string{
-		"adapter": fmt.Sprintf("%s/adapter/%s_adapter.go", basePath, featureName),
-		"repo":    fmt.Sprintf("%s/repo/%s_repo.go", basePath, featureName),
-		"usecase": fmt.Sprintf("%s/usecase/%s_usecase.go", basePath, featureName),
-		"proto":   fmt.Sprintf("proto/%s/%s/%s_%s.proto", templateData.ApiServiceName, templateData.ApiVersion, domainName, featureName),
-		"query":   fmt.Sprintf("supabase/queries/%s_%s.sql", domainName, featureName),
-		"api":     fmt.Sprintf("api/%s_%s_rpc.go", domainName, featureName),
-	}
+	featureFiles := c.GetFeatureFiles(domainName, featureName, templateData.ApiServiceName, templateData.ApiVersion)
 	for key, fileName := range featureFiles {
 		file, err := os.Create(fileName)
 		if err != nil {
@@ -80,8 +83,7 @@ func (c *NewCmd) NewFeature(args []string, flags *pflag.FlagSet) {
 
 	}
 	protoImport := fmt.Sprintf("import \"%s/%s/%s_%s.proto\"", templateData.ApiServiceName, templateData.ApiVersion, domainName, featureName)
-	serviceFilePath := fmt.Sprintf("proto/%s/%s/%s_service.proto", templateData.ApiServiceName, templateData.ApiVersion, templateData.ApiServiceName)
-
+	serviceFilePath := c.getServiceFilePath(templateData.ApiServiceName, templateData.ApiVersion)
 	err = c.fileUtils.ReplaceFile(serviceFilePath, "// INJECT IMPORTS", fmt.Sprintf("// INJECT IMPORTS\n%s;", protoImport))
 	if err != nil {
 		fmt.Println("Error replacing api", err)
