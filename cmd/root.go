@@ -2,34 +2,25 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/darwishdev/devkit-cli/app/new"
+	"github.com/darwishdev/devkit-cli/app/seed"
 	"github.com/darwishdev/devkit-cli/pkg/config"
-	"github.com/darwishdev/devkit-cli/pkg/fileutils"
-	"github.com/darwishdev/devkit-cli/pkg/gitclient"
-	"github.com/darwishdev/devkit-cli/pkg/templates"
-	"github.com/darwishdev/sqlseeder"
 	"github.com/spf13/cobra"
+	"os"
 )
 
 type Command struct {
-	config        config.ConfigInterface
-	newCmd        new.NewCmdInterface
-	fileUtils     fileutils.FileUtilsInterface
-	templateUtils templates.TemplatesInterface
-	sqlSeeder     sqlseeder.SeederInterface
-	gitClient     gitclient.GitClientInterface
+	config config.ConfigInterface
+	newCmd new.NewCmdInterface
+
+	seedCmd seed.SeedCmdInterface
 }
 
-func NewCommand(config config.ConfigInterface, newCmd new.NewCmdInterface, fileUtils fileutils.FileUtilsInterface, templateUtils templates.TemplatesInterface, sqlSeeder sqlseeder.SeederInterface, gitClient gitclient.GitClientInterface) *Command {
+func NewCommand(config config.ConfigInterface, newCmd new.NewCmdInterface, seedCmd seed.SeedCmdInterface) *Command {
 	return &Command{
-		config:        config,
-		newCmd:        newCmd,
-		fileUtils:     fileUtils,
-		templateUtils: templateUtils,
-		sqlSeeder:     sqlSeeder,
-		gitClient:     gitClient,
+		config:  config,
+		newCmd:  newCmd,
+		seedCmd: seedCmd,
 	}
 }
 func (c *Command) getRootCmd() *cobra.Command {
@@ -39,6 +30,7 @@ func (c *Command) getRootCmd() *cobra.Command {
 		Long:  `devkit-cli is a command-line interface designed to streamline the creation of new Go projects. It provides a solid foundation with essential backend functionalities out-of-the-box, allowing you to focus on building core features instead of writing repetitive boilerplate code.`,
 	}
 	rootCmd.AddCommand(c.getInitCmd())
+	rootCmd.AddCommand(c.getSeedCmd())
 	rootCmd.AddCommand(c.getNewCmd())
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	return rootCmd

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/darwishdev/devkit-cli/pkg/config"
+	"github.com/darwishdev/devkit-cli/pkg/db"
 	"github.com/darwishdev/devkit-cli/pkg/fileutils"
 	"github.com/darwishdev/devkit-cli/pkg/gitclient"
 	"github.com/darwishdev/devkit-cli/pkg/templates"
@@ -22,13 +23,14 @@ type NewCmd struct {
 	fileUtils     fileutils.FileUtilsInterface
 	templateUtils templates.TemplatesInterface
 	gitClient     gitclient.GitClientInterface
-
-	basePath string
+	dbUtils       db.DbInterface
+	basePath      string
 }
 
-func NewNewCmd(config config.ConfigInterface, fileUtils fileutils.FileUtilsInterface, templateUtils templates.TemplatesInterface, gitClient gitclient.GitClientInterface) NewCmdInterface {
+func NewNewCmd(config config.ConfigInterface, fileUtils fileutils.FileUtilsInterface, templateUtils templates.TemplatesInterface, gitClient gitclient.GitClientInterface, dbUtils db.DbInterface) NewCmdInterface {
 	return &NewCmd{
 		config:        config,
+		dbUtils:       dbUtils,
 		fileUtils:     fileUtils,
 		templateUtils: templateUtils,
 		gitClient:     gitClient,

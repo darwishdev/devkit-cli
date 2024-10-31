@@ -247,3 +247,51 @@ devkit new endpoint [endpoint-name] --domain [domain-name] --feature [feature-na
 4.  **Query Generation:** Creates a SQL query file (`[domain-name]_[feature-name].sql`) for the endpoint's database interaction.
 
 This command further automates the development process by generating endpoints with predefined structures and best practices. You can then customize the generated code to implement the specific logic for your endpoint.
+
+---
+
+### `devkit seed`
+
+This command automates the process of seeding your database tables with data from an Excel file.
+
+**Usage:**
+
+```bash
+devkit seed [schema_name] --file-path [excel_file_path]
+```
+
+*   `schema_name`: The name of the database schema you want to seed.
+*   `--file-path`: The path to the Excel file containing the data.
+*   `--out-file`: (Optional) The path to the output SQL file. If not provided, the SQL will be printed to the console.
+*   `--execute`: (Optional) If enabled, the generated SQL will be executed against the configured database.
+
+**Functionality:**
+
+1.  **Excel Parsing:** Reads the Excel file and extracts data from each sheet.
+2.  **SQL Generation:** Generates SQL insert statements for each sheet, mapping the sheet name to the table name in the specified schema.
+3.  **Relationship Handling:** Automatically handles one-to-many and many-to-many relationships between tables.
+4.  **Hashing:** Hashes password columns automatically (columns with names ending in `(#)`).
+5.  **Output:** Prints the generated SQL to the console or saves it to a file.
+6.  **Execution:** Optionally executes the SQL against the configured database.
+
+**Column Mapping:**
+
+*   **One-to-many:** `<primary_key_column><OneToManyDelimiter><table_name><OneToManyDelimiter><search_key_column>`
+*   **Many-to-many:** `<joining_table_primary_key><ManyToManyDelimiter><joining_table_name><ManyToManyDelimiter><second_table_name><ManyToManyDelimiter><second_table_search_column><ManyToManyDelimiter><first_table_search_column>`
+*   **Hashing:** `column_name+(#)`
+
+**Example:**
+
+To seed the `accounts_schema` from an Excel file named `accounts.xlsx` and save the generated SQL to a file named `q.sql`:
+
+```bash
+devkit seed accounts_schema --file-path accounts.xlsx --out-file q.sql
+```
+
+To seed the same schema and execute the SQL directly:
+
+```bash
+devkit seed accounts_schema --file-path accounts.xlsx --execute
+```
+
+This command significantly simplifies the process of seeding your database, especially when dealing with complex relationships and data transformations. It leverages the `sqlseeder` package  to handle the intricacies of SQL generation and relationship mapping.

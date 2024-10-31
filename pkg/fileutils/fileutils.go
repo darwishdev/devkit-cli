@@ -3,6 +3,7 @@ package fileutils
 import (
 	"bytes"
 	"fmt"
+	"github.com/xuri/excelize/v2"
 	"io"
 	"io/fs"
 	"os"
@@ -11,6 +12,7 @@ import (
 )
 
 type FileUtilsInterface interface {
+	ReadExcelFile(filePath string) (*excelize.File, *bytes.Buffer, error)
 	ReplaceFile(filePath string, oldText string, newText string) error
 	AppendToFile(filePath string, templateContent bytes.Buffer) error
 	CopyFiles(globPattern string, mapper func(string) string) error
@@ -25,6 +27,19 @@ type FileUtils struct {
 
 func NewFileUtils() FileUtilsInterface {
 	return &FileUtils{}
+}
+func (f *FileUtils) ReadExcelFile(filePath string) (*excelize.File, *bytes.Buffer, error) {
+	excelFile, err := os.ReadFile(filePath) // Replace with your Excel file path
+	if err != nil {
+		return nil, nil, err
+	}
+	fileBuffer := bytes.NewBuffer(excelFile)
+	excelBufer := bytes.NewBuffer(excelFile)
+	file, err := excelize.OpenReader(excelBufer)
+	if err != nil {
+		return nil, fileBuffer, err
+	}
+	return file, fileBuffer, nil
 }
 func (f *FileUtils) AppendToFile(filePath string, templateContent bytes.Buffer) error {
 	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)

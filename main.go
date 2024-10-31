@@ -5,8 +5,10 @@ import (
 	"os"
 
 	"github.com/darwishdev/devkit-cli/app/new"
+	"github.com/darwishdev/devkit-cli/app/seed"
 	"github.com/darwishdev/devkit-cli/cmd"
 	"github.com/darwishdev/devkit-cli/pkg/config"
+	"github.com/darwishdev/devkit-cli/pkg/db"
 	"github.com/darwishdev/devkit-cli/pkg/fileutils"
 	"github.com/darwishdev/devkit-cli/pkg/gitclient"
 	"github.com/darwishdev/devkit-cli/pkg/templates"
@@ -34,7 +36,9 @@ func main() {
 		},
 	})
 	gitClient := gitclient.NewGitClientRepo(context.Background(), cliConfig.GithubToken)
-	newCmd := new.NewNewCmd(appConfig, fileUtils, templateUtils, gitClient)
-	command := cmd.NewCommand(appConfig, newCmd, fileUtils, templateUtils, sqlSeeder, gitClient)
+	dbUtils := db.NewDb()
+	seedCmd := seed.NewSeedCmd(appConfig, fileUtils, sqlSeeder, dbUtils)
+	newCmd := new.NewNewCmd(appConfig, fileUtils, templateUtils, gitClient, dbUtils)
+	command := cmd.NewCommand(appConfig, newCmd, seedCmd)
 	command.Execute()
 }

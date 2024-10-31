@@ -5,7 +5,7 @@ import (
 )
 
 func (c *Command) geFeatureCmd() *cobra.Command {
-	apiCmd := &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "feature [feature_name] --domain [domain_name]",
 		Short: "Create a new feature within a domain",
 		Long: `The 'feature' command generates a new feature within a specified domain.
@@ -17,7 +17,7 @@ func (c *Command) geFeatureCmd() *cobra.Command {
 			c.newCmd.NewFeature(args, cmd.Flags())
 		},
 	}
-
-	apiCmd.Flags().StringP("domain", "d", "", "the domain name for the created feature , must be existed domain under  your app directory")
-	return apiCmd
+	cmd.Flags().StringP("domain", "d", "", "the domain name for the created feature , must be existed domain under  your app directory")
+	cmd.MarkFlagRequired("domain") // Make file-path flag required
+	return cmd
 }
