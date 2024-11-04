@@ -6,7 +6,7 @@ func (a *{{.DomainName}}Adapter) {{.EndpointName}}SqlFromGrpc(req {{.ApiRequestT
 {{end}}
 
 {{if not .IsEmptyResponse}}
-func (a *{{.DomainName}}Adapter) {{.EndpointName}}GrpcFromSql(req {{.RepoReturnType}}) *{{.ApiReturnType}} {
+func (a *{{.DomainName}}Adapter) {{.EndpointName}}GrpcFromSql(req {{.RepoReturnTypeActual}}) *{{.ApiReturnType}} {
 	return &{{.ApiReturnType}}{
 	}
 

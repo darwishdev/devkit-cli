@@ -1,4 +1,4 @@
-func (api *Api) {{.EndpointName}}(ctx context.Context, req *connect.Request[{{if .IsEmptyRequest}}emptypb.empty {{else}} {{.ApiRequestType}} {{end}}]) (*connect.Response[{{if .IsEmptyResponse}}emptypb.empty {{else}} {{.ApiReturnType}} {{end}}], error) {
+func (api *Api) {{.EndpointName}}(ctx context.Context, req *connect.Request[{{if .IsEmptyRequest}}emptypb.empty{{else}}{{.ApiRequestType}}{{end}}]) (*connect.Response[{{if .IsEmptyResponse}}emptypb.empty {{else}} {{.ApiReturnType}} {{end}}], error) {
 	if err := ctx.Err(); err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}

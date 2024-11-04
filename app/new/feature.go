@@ -17,13 +17,13 @@ type FeatureTemplateData struct {
 }
 
 func (c *NewCmd) GetFeatureFiles(domainName string, featureName string, serviceName string, serviceVersion string) map[string]string {
-	basePath := fmt.Sprintf("app/%s", domainName)
+	basePath := fmt.Sprintf("%s/%s", c.domainsFolderPath, domainName)
 	return map[string]string{
 		"adapter": fmt.Sprintf("%s/adapter/%s_adapter.go", basePath, featureName),
 		"repo":    fmt.Sprintf("%s/repo/%s_repo.go", basePath, featureName),
 		"usecase": fmt.Sprintf("%s/usecase/%s_usecase.go", basePath, featureName),
 		"proto":   fmt.Sprintf("proto/%s/%s/%s_%s.proto", serviceName, serviceVersion, domainName, featureName),
-		"query":   fmt.Sprintf("supabase/queries/%s_%s.sql", domainName, featureName),
+		"query":   fmt.Sprintf("%s/%s_%s.sql", c.queriesFolderPath, domainName, featureName),
 		"api":     fmt.Sprintf("api/%s_%s_rpc.go", domainName, featureName),
 	}
 }
@@ -89,5 +89,5 @@ func (c *NewCmd) NewFeature(args []string, flags *pflag.FlagSet) {
 		fmt.Println("Error replacing api", err)
 		os.Exit(1)
 	}
-	log.Info().Str("str", "new domain from domain").Msg("domain")
+	log.Info().Str("name", featureName).Msg("feature created successfully")
 }

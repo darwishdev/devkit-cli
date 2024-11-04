@@ -12,17 +12,18 @@ import (
 
 type EndpointTemplateData struct {
 	FeatureTemplateData
-	ApiRequestType    string
-	ApiReturnType     string
-	QueryReturnType   string
-	IsEmptyResponse   bool
-	IsEmptyRequest    bool
-	IsList            bool
-	IsNoSideEffect    bool
-	RepoRequestType   string
-	RepoReturnType    string
-	EndpointName      string
-	EndpointNameLower string
+	ApiRequestType          string
+	ApiReturnType           string
+	QueryReturnType         string
+	IsEmptyResponse         bool
+	IsEmptyRequest          bool
+	IsList                  bool
+	IsNoSideEffect          bool
+	RepoRequestType         string
+	RepoReturnTypeActual    string
+	RepoReturnTypeWithError string
+	EndpointName            string
+	EndpointNameLower       string
 }
 
 func (c *NewCmd) GetEndpointTemplateData(domainName string, featureName string, endpointName string, flags *pflag.FlagSet) (*EndpointTemplateData, error) {
@@ -30,19 +31,22 @@ func (c *NewCmd) GetEndpointTemplateData(domainName string, featureName string, 
 	if err != nil {
 		return nil, err
 	}
-
+	conf, err := c.config.GetProjectConfig()
+	if err != nil {
+		return nil, err
+	}
+	rpcService := fmt.Sprintf("%s%s", conf.ApiServiceName, conf.ApiVersion)
 	isNoSideEffect, _ := flags.GetBool("get")
 	isEmptyResponse, _ := flags.GetBool("empty-esponse")
 	isEmptyRequest, _ := flags.GetBool("empty-request")
 	isList, _ := flags.GetBool("list")
 
 	endpointFunctionName := strcase.ToCamel(fmt.Sprintf("%s_%s", featureName, endpointName))
-	endpointNameCamel := strcase.ToCamel(endpointName)
-	apiRequestType := fmt.Sprintf("%sRequest", endpointFunctionName)
-	apiReturnType := fmt.Sprintf("%sResponse", endpointFunctionName)
+	apiRequestType := fmt.Sprintf("%s.%sRequest", rpcService, endpointFunctionName)
+	apiReturnType := fmt.Sprintf("%s.%sResponse", rpcService, endpointFunctionName)
 	queryReturnType := "one"
 	repoRequestType := fmt.Sprintf("db.%sParams", endpointFunctionName)
-	repoReturnType := fmt.Sprintf("*db.%sRow", endpointFunctionName)
+	repoReturnTypeActual := fmt.Sprintf("*db.%sRow", endpointFunctionName)
 	if isEmptyResponse {
 		apiReturnType = "emptypb.Empty"
 		queryReturnType = "exec"
@@ -51,23 +55,25 @@ func (c *NewCmd) GetEndpointTemplateData(domainName string, featureName string, 
 		apiRequestType = "emptypb.Empty"
 	}
 	if isList || strings.Contains(endpointName, "list") {
-		repoReturnType = fmt.Sprintf("([]db.%sRow , error)", endpointNameCamel)
+		repoReturnTypeActual = fmt.Sprintf("[]db.%sRow", endpointFunctionName)
 		queryReturnType = "many"
 	}
 
+	repoReturnTypeWithError := fmt.Sprintf("(%s , error)", repoReturnTypeActual)
 	return &EndpointTemplateData{
-		FeatureTemplateData: *featureTemplateData,
-		ApiRequestType:      apiRequestType,
-		ApiReturnType:       apiReturnType,
-		QueryReturnType:     queryReturnType,
-		RepoRequestType:     repoRequestType,
-		RepoReturnType:      repoReturnType,
-		IsEmptyResponse:     isEmptyResponse,
-		IsEmptyRequest:      isEmptyRequest,
-		IsNoSideEffect:      isNoSideEffect || isList,
-		IsList:              isList,
-		EndpointNameLower:   endpointName,
-		EndpointName:        endpointFunctionName,
+		FeatureTemplateData:     *featureTemplateData,
+		ApiRequestType:          apiRequestType,
+		ApiReturnType:           apiReturnType,
+		QueryReturnType:         queryReturnType,
+		RepoRequestType:         repoRequestType,
+		RepoReturnTypeWithError: repoReturnTypeWithError,
+		RepoReturnTypeActual:    repoReturnTypeActual,
+		IsEmptyResponse:         isEmptyResponse,
+		IsEmptyRequest:          isEmptyRequest,
+		IsNoSideEffect:          isNoSideEffect || isList,
+		IsList:                  isList,
+		EndpointNameLower:       endpointName,
+		EndpointName:            endpointFunctionName,
 	}, nil
 
 }
@@ -91,7 +97,7 @@ func (c *NewCmd) NewEndpoint(args []string, flags *pflag.FlagSet) {
 	}
 	templateData, err := c.GetEndpointTemplateData(domainName, featureName, endpointName, flags)
 	if err != nil {
-		log.Err(err).Msg("failed to get the project config")
+		log.Err(err).Msg("failed to get the templates data")
 		os.Exit(1)
 	}
 	endpointTemplates, err := c.templateUtils.LoadLayerTemplates(fmt.Sprintf("endpoint*"), templateData)
@@ -100,8 +106,6 @@ func (c *NewCmd) NewEndpoint(args []string, flags *pflag.FlagSet) {
 		os.Exit(1)
 	}
 	endpointFiles := c.GetFeatureFiles(domainName, featureName, templateData.ApiServiceName, templateData.ApiVersion)
-
-	log.Debug().Interface("domainName", endpointFiles).Msg("e2feeshh")
 	injecteionFiles := map[string]string{
 		"adapterinjector": fmt.Sprintf("app/%s/adapter/adapter.go", domainName),
 		"usecaseinjector": fmt.Sprintf("app/%s/usecase/usecase.go", domainName),
@@ -135,5 +139,5 @@ func (c *NewCmd) NewEndpoint(args []string, flags *pflag.FlagSet) {
 
 	}
 
-	log.Info().Str("str", "new domain from domain").Msg("domain")
+	log.Info().Str("name", endpointName).Msg("endpoint created")
 }

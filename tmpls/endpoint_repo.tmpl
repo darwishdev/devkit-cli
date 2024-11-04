@@ -1,4 +1,4 @@
-func (repo *{{.DomainName}}Repo) {{.EndpointName}}(ctx context.Context{{if not .IsEmptyRequest}}, req {{.RepoRequestType}}{{end}}) {{if .IsEmptyResponse}}error{{else}}({{.RepoReturnType}} , error){{end}} {
+func (repo *{{.DomainName}}Repo) {{.EndpointName}}(ctx context.Context{{if not .IsEmptyRequest}}, req {{.RepoRequestType}}{{end}}) {{if .IsEmptyResponse}}error{{else}}{{.RepoReturnTypeWithError}}{{end}} {
 	{{if .IsEmptyRequest}}
 	resp, err := repo.store.{{.EndpointName}}(ctx)
 	{{else}}

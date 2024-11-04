@@ -51,9 +51,9 @@ func (c *NewCmd) NewDomain(args []string, flags *pflag.FlagSet) {
 		os.Exit(1)
 	}
 
-	adapterFolder := fmt.Sprintf("%s/%s/adapter", c.basePath, domainName)
-	repoFolder := fmt.Sprintf("%s/%s/repo", c.basePath, domainName)
-	usecaseFolder := fmt.Sprintf("%s/%s/usecase", c.basePath, domainName)
+	adapterFolder := fmt.Sprintf("%s/%s/adapter", c.domainsFolderPath, domainName)
+	repoFolder := fmt.Sprintf("%s/%s/repo", c.domainsFolderPath, domainName)
+	usecaseFolder := fmt.Sprintf("%s/%s/usecase", c.domainsFolderPath, domainName)
 	domainDirs := map[string]string{
 		"adapter": adapterFolder,
 		"repo":    repoFolder,
@@ -73,6 +73,7 @@ func (c *NewCmd) NewDomain(args []string, flags *pflag.FlagSet) {
 		"adapter": fmt.Sprintf("%s/adapter.go", adapterFolder),
 		"repo":    fmt.Sprintf("%s/repo.go", repoFolder),
 		"usecase": fmt.Sprintf("%s/usecase.go", usecaseFolder),
+		"schema":  fmt.Sprintf("%s/usecase.go", usecaseFolder),
 	}
 
 	for key, fileName := range domainFiles {
@@ -102,6 +103,10 @@ func (c *NewCmd) NewDomain(args []string, flags *pflag.FlagSet) {
 		"// USECASE_INSTANTIATIONS": fmt.Sprintf("// USECASE_INSTANTIATIONS\n%s", usecaseInstantiation.String()),
 		"// USECASE_INJECTIONS":     fmt.Sprintf("// USECASE_INJECTIONS\n%s", usecaseInjection.String()),
 	})
-	log.Info().Interface("tmpls", domainTemplates).Msg("domain")
+	err = c.ExecCmd("", "supabase", "migration", "new", fmt.Sprintf("%s_schema", domainName))
+	if err != nil {
+		log.Err(err).Msg("supabase migration failed")
+		os.Exit(1)
+	}
 	log.Info().Str("str", "new domain from domain").Msg("domain")
 }

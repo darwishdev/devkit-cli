@@ -6,14 +6,17 @@ import (
 
 func (c *Command) getNewCmd() *cobra.Command {
 	newCmd := &cobra.Command{
-		Use:   "new",
-		Short: "A brief description of your command",
-		Long: `A longer description that spans multiple lines and likely contains examples
-		and usage of using your command. For example:
-		Cobra is a CLI library for Go that empowers applications.
-		This application is a tool to generate the needed files
-		to quickly create a Cobra application.`,
-		Run: func(cmd *cobra.Command, args []string) {
+		Use:   "new [command]",
+		Short: "Create a new resource",
+		Long: `The "new" command is used to create various types of resources.
+		It requires a subcommand to specify the type of resource to create. For example:
+
+		new api       # Creates a new API
+		new domain    # Creates a new domain
+		new feature   # Creates a new feature
+		new endpoint  # Creates a new endpoint
+
+		Each subcommand has its own options and usage instructions.`, Run: func(cmd *cobra.Command, args []string) {
 		},
 	}
 

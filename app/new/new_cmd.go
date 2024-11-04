@@ -19,26 +19,29 @@ type NewCmdInterface interface {
 	NewDomain(args []string, flags *pflag.FlagSet)
 }
 type NewCmd struct {
-	config        config.ConfigInterface
-	fileUtils     fileutils.FileUtilsInterface
-	templateUtils templates.TemplatesInterface
-	gitClient     gitclient.GitClientInterface
-	dbUtils       db.DbInterface
-	basePath      string
+	config               config.ConfigInterface
+	fileUtils            fileutils.FileUtilsInterface
+	templateUtils        templates.TemplatesInterface
+	gitClient            gitclient.GitClientInterface
+	dbUtils              db.DbInterface
+	migrationsFolderPath string
+	domainsFolderPath    string
+	queriesFolderPath    string
 }
 
 func NewNewCmd(config config.ConfigInterface, fileUtils fileutils.FileUtilsInterface, templateUtils templates.TemplatesInterface, gitClient gitclient.GitClientInterface, dbUtils db.DbInterface) NewCmdInterface {
 	return &NewCmd{
-		config:        config,
-		dbUtils:       dbUtils,
-		fileUtils:     fileUtils,
-		templateUtils: templateUtils,
-		gitClient:     gitClient,
-		basePath:      "app",
+		config:               config,
+		dbUtils:              dbUtils,
+		fileUtils:            fileUtils,
+		templateUtils:        templateUtils,
+		gitClient:            gitClient,
+		domainsFolderPath:    "app",
+		migrationsFolderPath: "supabase/migrations",
+		queriesFolderPath:    "supabase/queries",
 	}
 }
 
 func (c *NewCmd) getServiceFilePath(serviceName, version string) string {
 	return fmt.Sprintf("proto/%s/%s/%s_service.proto", serviceName, version, serviceName)
-
 }

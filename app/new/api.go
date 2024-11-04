@@ -83,5 +83,5 @@ func (c *NewCmd) NewApi(args []string, flags *pflag.FlagSet) {
 		fmt.Println("error init the project:", err)
 		os.Exit(1)
 	}
-	log.Debug().Str(bufUser, "new api from domain").Msg("domain")
+	log.Info().Str("name", appName).Msg("new app created")
 }

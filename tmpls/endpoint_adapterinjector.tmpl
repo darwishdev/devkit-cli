@@ -3,5 +3,5 @@
 {{end}}
 
 {{if not .IsEmptyResponse}}
-{{.EndpointName}}GrpcFromSql(req {{.RepoReturnType}}) *{{.ApiReturnType}}
+{{.EndpointName}}GrpcFromSql(req {{.RepoReturnTypeActual}}) *{{.ApiReturnType}}
 {{end}}
