@@ -9,7 +9,8 @@ func (u *{{.DomainName}}Usecase) {{.EndpointName}}(ctx context.Context{{if not .
 	{{if .IsEmptyRequest}}
 	record, err := u.repo.{{.EndpointName}}(ctx)
 	{{else}}
-	record, err := u.repo.{{.EndpointName}}(ctx, sqlReq)
+	sqlReq , err := u.adapter.{{.EndpointName}}SqlFromGrpc(req)
+	record, err := u.repo.{{.EndpointName}}(ctx, sqlRaeq)
 	{{end}}
 	if err != nil {
 		return {{if not .IsEmptyResponse}}nil, {{end}}err
@@ -17,7 +18,6 @@ func (u *{{.DomainName}}Usecase) {{.EndpointName}}(ctx context.Context{{if not .
 	{{if .IsEmptyResponse}}
 	return nil
 	{{else}}
-
 	resp, err := u.adapter.{{.EndpointName}}GrpcFromSql(record)
 	if err != nil {
 		return nil, err

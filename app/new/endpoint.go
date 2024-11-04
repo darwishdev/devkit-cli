@@ -3,6 +3,7 @@ package new
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/iancoleman/strcase"
@@ -120,6 +121,7 @@ func (c *NewCmd) NewEndpoint(args []string, flags *pflag.FlagSet) {
 				log.Err(err).Str("file", fileName).Msg("error appending to file")
 				os.Exit(1)
 			}
+			log.Info().Str("name", filepath.Base(fileName)).Msg("the endpoint code appended to this file")
 			continue
 
 		}
@@ -136,6 +138,8 @@ func (c *NewCmd) NewEndpoint(args []string, flags *pflag.FlagSet) {
 			log.Err(err).Str("file", injectioFile).Msg("error injecting interface for file")
 			os.Exit(1)
 		}
+
+		log.Info().Str("name", injectioFile).Msg("this file is injected succesfully with the base code")
 
 	}
 

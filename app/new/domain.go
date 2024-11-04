@@ -1,8 +1,10 @@
 package new
 
 import (
+	"bytes"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/darwishdev/devkit-cli/pkg/config"
 	"github.com/iancoleman/strcase"
@@ -82,15 +84,16 @@ func (c *NewCmd) NewDomain(args []string, flags *pflag.FlagSet) {
 			fmt.Println("Error creating:", key, err)
 			os.Exit(1)
 		}
-
+		log.Info().Str("name", filepath.Base(fileName)).Msg("new file created")
 		template, ok := domainTemplates[key]
 		if ok {
-			_, err = file.Write(template.Bytes())
+			err = c.fileUtils.AppendToFile(file.Name(), *bytes.NewBuffer(template.Bytes()))
 			if err != nil {
 				fmt.Println("Error adding base content for:", key, err)
 				os.Exit(1)
 			}
 		}
+		log.Info().Str("name", filepath.Base(fileName)).Msg("new file filled with base code")
 
 	}
 	usecaseImport, _ := domainTemplates["import"]
@@ -103,6 +106,10 @@ func (c *NewCmd) NewDomain(args []string, flags *pflag.FlagSet) {
 		"// USECASE_INSTANTIATIONS": fmt.Sprintf("// USECASE_INSTANTIATIONS\n%s", usecaseInstantiation.String()),
 		"// USECASE_INJECTIONS":     fmt.Sprintf("// USECASE_INJECTIONS\n%s", usecaseInjection.String()),
 	})
+	if err != nil {
+		log.Err(err).Msg("can't inject the api file")
+	}
+	log.Info().Msg("the api/api.go injected successfully with the new usecase")
 	err = c.ExecCmd("", "supabase", "migration", "new", fmt.Sprintf("%s_schema", domainName))
 	if err != nil {
 		log.Err(err).Msg("supabase migration failed")

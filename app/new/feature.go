@@ -66,6 +66,7 @@ func (c *NewCmd) NewFeature(args []string, flags *pflag.FlagSet) {
 	}
 
 	featureFiles := c.GetFeatureFiles(domainName, featureName, templateData.ApiServiceName, templateData.ApiVersion)
+	log.Debug().Interface("test", featureTemplates).Msg("test")
 	for key, fileName := range featureFiles {
 		file, err := os.Create(fileName)
 		if err != nil {
@@ -74,11 +75,13 @@ func (c *NewCmd) NewFeature(args []string, flags *pflag.FlagSet) {
 		}
 		template, ok := featureTemplates[key]
 		if ok {
+
 			_, err = file.Write(template.Bytes())
 			if err != nil {
 				fmt.Println("Error adding base content for:", key, err)
 				os.Exit(1)
 			}
+
 		}
 
 	}
