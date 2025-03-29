@@ -1,6 +1,7 @@
 package seed
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -9,6 +10,8 @@ import (
 	"github.com/iancoleman/strcase"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/pflag"
+	"github.com/tdewolff/minify/v2"
+	"github.com/tdewolff/minify/v2/svg"
 )
 
 // This command creates a new domain within your Go backend application
@@ -42,6 +45,9 @@ func (c *SeedCmd) StorageSeed(flags *pflag.FlagSet) {
 			os.Exit(1)
 		}
 		defer db.Close()
+		m := minify.New()
+
+		m.AddFunc("image/svg+xml", svg.Minify)
 		err = filepath.Walk(iconsPath, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
@@ -53,12 +59,16 @@ func (c *SeedCmd) StorageSeed(flags *pflag.FlagSet) {
 				nameWithotExt := strings.ToLower(strings.TrimSuffix(baseFileName, supportedExt))
 				iconName := strcase.ToSnake(nameWithotExt)
 				iconContent, err := os.ReadFile(path) // Use os.ReadFile instead of ioutil.ReadFile
+				// Minify the SVG content
+				var minified bytes.Buffer
+				err = m.Minify("image/svg+xml", &minified, bytes.NewReader(iconContent))
 				if err != nil {
 					return err
 				}
+
 				if iconName != "" {
-					iconQuery := fmt.Sprintf("INSERT INTO icons (icon_name, icon_content) VALUES ('%s', '%s')", iconName, string(iconContent))
-					_, err = db.Exec(iconQuery)
+					iconQuery := "INSERT INTO icon (icon_name, icon_content) VALUES ($1, $2)"
+					_, err = db.Exec(iconQuery, iconName, minified.String())
 					if err != nil && !strings.Contains(err.Error(), "duplicate") {
 						return err
 					}

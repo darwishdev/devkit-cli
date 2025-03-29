@@ -56,6 +56,7 @@ func (c *NewCmd) GetEndpointTemplateData(domainName string, featureName string, 
 		apiRequestType = "emptypb.Empty"
 	}
 	if isList || strings.Contains(endpointName, "list") {
+		isNoSideEffect = true
 		repoReturnTypeActual = fmt.Sprintf("[]db.%sRow", endpointFunctionName)
 		queryReturnType = "many"
 	}

@@ -9,7 +9,7 @@ pushv:
 cleancli:
 	rm -rf ~/devkitcli/ ~/.config/devkitcli/ ~/release/
 build : 
-	go build -o devkit
+	go build -o devkit && cp devkit ~/devkitcli/
 clean:
 	cd example && rm -rf app api proto sup*
 init:

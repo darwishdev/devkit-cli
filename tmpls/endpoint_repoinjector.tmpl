@@ -1,1 +1,1 @@
-{{.EndpointName}}(ctx context.Context{{if not .IsEmptyRequest}}, req {{.RepoRequestType}}{{end}}) {{if .IsEmptyResponse}}error{{else}}{{.RepoReturnTypeWithError}}{{end}} 
+ {{.EndpointName}}(ctx context.Context{{if not .IsEmptyRequest}}, req {{.RepoRequestType}}{{end}}) {{if .IsEmptyResponse}}error{{else}}{{.RepoReturnTypeWithError}}{{end}} 

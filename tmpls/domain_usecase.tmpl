@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"context"
+	"connectrpc.com/connect"
         "{{.BasePath}}/db"
         "{{.BasePath}}/proto_gen/{{.ApiServiceName}}/{{.ApiVersion}}"
         "{{.BasePath}}/app/{{.DomainNameLower}}/repo"

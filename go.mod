@@ -3,10 +3,12 @@ module github.com/darwishdev/devkit-cli
 go 1.23.2
 
 require (
-	github.com/darwishdev/sqlseeder v0.1.12
+	github.com/chai2010/webp v1.1.1
+	github.com/darwishdev/sqlseeder v0.1.19
 	github.com/darwishdev/supaapi-go v0.14.0
 	github.com/google/go-github/v66 v66.0.0
 	github.com/iancoleman/strcase v0.3.0
+	github.com/kolesa-team/go-webp v1.0.4
 	github.com/lib/pq v1.10.9
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/cobra v1.8.1
@@ -14,6 +16,7 @@ require (
 	github.com/spf13/viper v1.19.0
 	github.com/supabase-community/auth-go v1.3.2
 	github.com/supabase-community/storage-go v0.7.0
+	github.com/tdewolff/minify/v2 v2.21.2
 	github.com/xuri/excelize/v2 v2.9.0
 	golang.org/x/crypto v0.28.0
 	golang.org/x/oauth2 v0.23.0
@@ -40,6 +43,7 @@ require (
 	github.com/spf13/cast v1.6.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/tangzero/inflector v1.0.0 // indirect
+	github.com/tdewolff/parse/v2 v2.7.19 // indirect
 	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 // indirect
 	github.com/xuri/efp v0.0.0-20240408161823-9ad904a10d6d // indirect
 	github.com/xuri/nfp v0.0.0-20240318013403-ab9948c2c4a7 // indirect

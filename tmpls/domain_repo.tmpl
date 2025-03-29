@@ -17,6 +17,7 @@ type {{.DomainName}}Repo struct {
 
 func New{{.DomainName}}Repo(store db.Store) {{.DomainName}}RepoInterface {
 	errorHandler := map[string]string{
+	// INJECT ERROR
 	}
 	return &{{.DomainName}}Repo{
 		store:        store,

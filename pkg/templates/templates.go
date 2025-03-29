@@ -55,7 +55,7 @@ func (t *Templates) LoadLayerTemplates(pattern string, data interface{}) (map[st
 	for _, templatePath := range matches {
 		templateReader, err := t.LoadTemplate(templatePath, data)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("error on file %s : %w", templatePath, err)
 		}
 		fileNameWithExt := filepath.Base(templatePath)
 		fileName := strings.TrimSuffix(fileNameWithExt, filepath.Ext(fileNameWithExt))

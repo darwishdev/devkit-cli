@@ -10,7 +10,10 @@ import (
 )
 
 type SeedCmdInterface interface {
+	SeedPermissions()
 	NewSeed(args []string, flags *pflag.FlagSet)
+	SeedSuperUser(flags *pflag.FlagSet)
+	PaginateQuery(flags *pflag.FlagSet)
 	StorageSeed(flags *pflag.FlagSet)
 }
 type SeedCmd struct {

@@ -12,6 +12,7 @@ import (
 )
 
 type FileUtilsInterface interface {
+	WriteToFile(filePath string, templateContent bytes.Buffer) error
 	ReadExcelFile(filePath string) (*excelize.File, *bytes.Buffer, error)
 	ReplaceFile(filePath string, oldText string, newText string) error
 	AppendToFile(filePath string, templateContent bytes.Buffer) error
@@ -41,16 +42,32 @@ func (f *FileUtils) ReadExcelFile(filePath string) (*excelize.File, *bytes.Buffe
 	}
 	return file, fileBuffer, nil
 }
-func (f *FileUtils) AppendToFile(filePath string, templateContent bytes.Buffer) error {
-	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+func (f *FileUtils) WriteToFile(filePath string, templateContent bytes.Buffer) error {
+	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
-		fmt.Println("Error opening file:", err)
 		return err
 	}
 	defer file.Close()
 	// 2. Append the content
-	if _, err := file.Write(templateContent.Bytes()); err != nil {
-		fmt.Println("Error appending to file:", err)
+	_, err = file.Write(templateContent.Bytes())
+	if err != nil {
+		return err
+	}
+	// Force a flush to disk
+	if err := file.Sync(); err != nil {
+		return err
+	}
+	return nil
+}
+func (f *FileUtils) AppendToFile(filePath string, templateContent bytes.Buffer) error {
+	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	// 2. Append the content
+	_, err = file.Write(templateContent.Bytes())
+	if err != nil {
 		return err
 	}
 	return nil

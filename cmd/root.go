@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/darwishdev/devkit-cli/app/new"
 	"github.com/darwishdev/devkit-cli/app/seed"
 	"github.com/darwishdev/devkit-cli/pkg/config"
@@ -41,11 +40,11 @@ func (c *Command) getInitCmd() *cobra.Command {
 		Short: "Initialize the devkit config file",
 		Long:  `Creates a config file in the user's home directory.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			err := c.config.InitProjectConfig()
-			if err != nil {
-				fmt.Println("err initing the project config file:", err)
-				os.Exit(1)
-			}
+			// 	err := c.config.InitProjectConfig()
+			// 	if err != nil {
+			// 		fmt.Println("err initing the project config file:", err)
+			// 		os.Exit(1)
+			// 	}
 		},
 	}
 }

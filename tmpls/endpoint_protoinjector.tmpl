@@ -1,2 +1,2 @@
-rpc {{.EndpointName}}({{if not .IsEmptyRequest}}{{.EndpointName}}Request{{else}}google.protobuf.Empty{{end}}) returns {{if not .IsEmptyResponse}} {{.EndpointName}}Response {{else}}google.protobuf.Empty{{end}} { {{if .IsNoSideEffect}} google.protobuf.Empty {{end}} }
+rpc {{.EndpointName}}({{.EndpointName}}Request) returns ({{.EndpointName}}Response) { {{if .IsNoSideEffect}} option idempotency_level = NO_SIDE_EFFECTS; {{end}} }
 

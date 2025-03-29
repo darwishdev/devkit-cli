@@ -24,7 +24,13 @@ func (c *Command) getSeedCmd() *cobra.Command {
 	cmd.Flags().BoolP("execute", "e", false, "Execute the generated SQL (optional)")
 	cmd.MarkFlagRequired("file-path")
 
+	permissionsSeed := c.getPermissionsSeedCmd()
 	storageCmd := c.getSstorageCmd()
+	superUserCmd := c.getSeedSuperUserCmd()
+	paginatoreCmd := c.getNewSeedPaginator()
 	cmd.AddCommand(storageCmd)
+	cmd.AddCommand(permissionsSeed)
+	cmd.AddCommand(superUserCmd)
+	cmd.AddCommand(paginatoreCmd)
 	return cmd
 }

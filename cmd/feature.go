@@ -17,6 +17,8 @@ func (c *Command) geFeatureCmd() *cobra.Command {
 			c.newCmd.NewFeature(args, cmd.Flags())
 		},
 	}
+
+	cmd.Flags().StringP("inherit", "i", "", "feature name to inherit from it all the endpoints, it must be on the same domain")
 	cmd.Flags().StringP("domain", "d", "", "the domain name for the created feature , must be existed domain under  your app directory")
 	cmd.MarkFlagRequired("domain") // Make file-path flag required
 	return cmd

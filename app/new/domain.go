@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/darwishdev/devkit-cli/pkg/config"
 	"github.com/iancoleman/strcase"
@@ -79,21 +78,22 @@ func (c *NewCmd) NewDomain(args []string, flags *pflag.FlagSet) {
 	}
 
 	for key, fileName := range domainFiles {
-		file, err := os.Create(fileName)
+		_, err := os.Create(fileName)
 		if err != nil {
 			fmt.Println("Error creating:", key, err)
 			os.Exit(1)
 		}
-		log.Info().Str("name", filepath.Base(fileName)).Msg("new file created")
+
+	}
+	for key, fileName := range domainFiles {
 		template, ok := domainTemplates[key]
 		if ok {
-			err = c.fileUtils.AppendToFile(file.Name(), *bytes.NewBuffer(template.Bytes()))
+			err = c.fileUtils.WriteToFile(fileName, *bytes.NewBuffer(template.Bytes()))
 			if err != nil {
 				fmt.Println("Error adding base content for:", key, err)
 				os.Exit(1)
 			}
 		}
-		log.Info().Str("name", filepath.Base(fileName)).Msg("new file filled with base code")
 
 	}
 	usecaseImport, _ := domainTemplates["import"]

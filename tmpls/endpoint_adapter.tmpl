@@ -1,5 +1,5 @@
 {{if not .IsEmptyRequest}}
-func (a *{{.DomainName}}Adapter) {{.EndpointName}}SqlFromGrpc(req {{.ApiRequestType}}) {{.RepoRequestType}} {
+func (a *{{.DomainName}}Adapter) {{.EndpointName}}SqlFromGrpc(req *{{.ApiRequestType}}) *{{.RepoRequestType}} {
 	return &db.{{.EndpointName}}Params{
 	}
 }

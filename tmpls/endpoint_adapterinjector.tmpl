@@ -1,7 +1,7 @@
 {{if not .IsEmptyRequest}}
-{{.EndpointName}}SqlFromGrpc(req {{.ApiRequestType}}) {{.RepoRequestType}}
+{{.EndpointName}}SqlFromGrpc(req *{{.ApiRequestType}}) *{{.RepoRequestType}}
 {{end}}
 
 {{if not .IsEmptyResponse}}
-{{.EndpointName}}GrpcFromSql(req {{.RepoReturnTypeActual}}) *{{.ApiReturnType}}
+{{.EndpointName}}GrpcFromSql(req *{{.RepoReturnTypeActual}}) *{{.ApiReturnType}}
 {{end}}

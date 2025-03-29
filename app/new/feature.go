@@ -3,6 +3,8 @@ package new
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/iancoleman/strcase"
 	"github.com/rs/zerolog/log"
@@ -41,6 +43,46 @@ func (c *NewCmd) GetFeatureTemplateData(domainName string, featureName string) (
 
 }
 
+func (c *NewCmd) InheritFiles(pattern string, inheritFrom string, featureName string) {
+	// patter is app/{domain}/*/*_{feature}.go
+	matches, err := filepath.Glob(pattern)
+	if err != nil {
+		log.Err(err)
+		os.Exit(1)
+	}
+
+	log.Info().Interface("from", matches).Str("to", pattern).Msg("file copied and renamed")
+	for _, filePath := range matches {
+		// Extract the directory and base file name
+		dir := filepath.Dir(filePath)
+		base := filepath.Base(filePath)
+
+		// Replace the inheritFrom part with featureName in the base file name
+		newFileName := strings.Replace(base, inheritFrom, featureName, 1)
+
+		// Construct the new file path
+		newFilePath := filepath.Join(dir, newFileName)
+
+		// Copy the file content
+		input, err := os.ReadFile(filePath)
+		if err != nil {
+			log.Err(err).Str("file", filePath).Msg("error reading file")
+			os.Exit(1)
+		}
+		newInput := strings.ReplaceAll(string(input), inheritFrom, featureName)
+		newInput = strings.ReplaceAll(newInput, strcase.ToCamel(inheritFrom), strcase.ToCamel(featureName))
+
+		err = os.WriteFile(newFilePath, []byte(newInput), 0644)
+		if err != nil {
+			log.Err(err).Str("file", newFilePath).Msg("error writing file")
+			os.Exit(1)
+		}
+
+		log.Info().Str("from", filePath).Str("to", newFilePath).Msg("file copied and renamed")
+	}
+
+}
+
 // This command creates a new domain within your Go backend application
 // by generating the necessary files and directory structure.
 func (c *NewCmd) NewFeature(args []string, flags *pflag.FlagSet) {
@@ -49,6 +91,7 @@ func (c *NewCmd) NewFeature(args []string, flags *pflag.FlagSet) {
 	if err != nil || domainName == "" {
 		log.Err(fmt.Errorf("the --domain flag is required")).Msg("")
 	}
+
 	// check if the domain is found
 	_, err = os.Stat(fmt.Sprintf("app/%s", domainName))
 	if err != nil {
@@ -59,6 +102,20 @@ func (c *NewCmd) NewFeature(args []string, flags *pflag.FlagSet) {
 		log.Err(err).Msg("failed to get the project config")
 		os.Exit(1)
 	}
+	inheritFrom, err := flags.GetString("inherit")
+	if err == nil && len(inheritFrom) > 0 {
+		// patter is app/{domain}/*/*_{feature}.go
+		appPattern := fmt.Sprintf("%s/%s/*/%s_*.go", c.domainsFolderPath, domainName, inheritFrom)
+		apiPattern := fmt.Sprintf("api/%s_%s_rpc.go", domainName, inheritFrom)
+		dbPattern := fmt.Sprintf("supabase/queries/%s_%s.sql", domainName, inheritFrom)
+		protoPattern := fmt.Sprintf("proto/%s/%s/%s_%s.proto", templateData.ApiServiceName, templateData.ApiVersion, domainName, inheritFrom)
+		c.InheritFiles(appPattern, inheritFrom, featureName)
+		c.InheritFiles(dbPattern, inheritFrom, featureName)
+		c.InheritFiles(protoPattern, inheritFrom, featureName)
+		c.InheritFiles(apiPattern, inheritFrom, featureName)
+		os.Exit(0)
+	}
+
 	featureTemplates, err := c.templateUtils.LoadLayerTemplates(fmt.Sprintf("feature*"), templateData)
 	if err != nil {
 		log.Err(err).Msg("error getting the template for the domain")

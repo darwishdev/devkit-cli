@@ -3,6 +3,7 @@ package seed
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/pflag"
@@ -38,14 +39,27 @@ func (c *SeedCmd) NewSeed(args []string, flags *pflag.FlagSet) {
 		}
 	}()
 	fullSqlQuery := ""
+
+	columnsMapper := map[string]string{}
+	columnsMappperRows, _ := file.GetRows("columns_mapper")
+	if len(columnsMappperRows) > 0 {
+		for _, row := range columnsMappperRows[1:] { // Start from the second row (index 1)
+			key := strings.ToLower(strings.TrimSpace(row[0]))
+			columnsMapper[key] = row[1]
+		}
+	}
 	for _, sheetName := range file.GetSheetList() {
-		queryString, err := c.sqlSeeder.SeedFromExcel(*buffer, schemaName, sheetName, sheetName)
+		tableName := strings.Split(sheetName, "--")[0]
+		if sheetName == "columns_mapper" {
+			continue
+		}
+		queryString, err := c.sqlSeeder.SeedFromExcel(*buffer, schemaName, tableName, sheetName, columnsMapper)
 		if err != nil {
 			log.Err(err).Str("Sheet", sheetName).Msg("can't get the sql query")
 			os.Exit(1)
 		}
 		fullSqlQuery += fmt.Sprintf("\n%s\n", queryString)
-		if sheetName == "users" && !isSkipSupabase {
+		if sheetName == "user" && !isSkipSupabase {
 			rows, err := file.GetRows(sheetName)
 			if err != nil {
 				log.Err(err).Msg("can't get users sheet rows")
@@ -79,5 +93,5 @@ func (c *SeedCmd) NewSeed(args []string, flags *pflag.FlagSet) {
 			log.Err(err).Msg("error executing the insert statement")
 		}
 	}
-	log.Info().Str("str", "new domain from domain").Msg("domain")
+	log.Info().Msg("database seed for the schema done sccuesfully")
 }
