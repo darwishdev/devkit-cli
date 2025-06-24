@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/iancoleman/strcase"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/pflag"
 	"github.com/tdewolff/minify/v2"
@@ -28,7 +27,7 @@ func (c *SeedCmd) StorageSeed(flags *pflag.FlagSet) {
 
 	// Basic validation
 	if filesPath == "" && iconsPath == "" {
-		log.Err(fmt.Errorf("Error: --files-path or--icons-path  one of them must be passed to this command")).Msg("")
+		log.Err(fmt.Errorf("error: --files-path or--icons-path  one of them must be passed to this command")).Msg("")
 		os.Exit(1)
 	}
 	if filesPath != "" {
@@ -57,8 +56,12 @@ func (c *SeedCmd) StorageSeed(flags *pflag.FlagSet) {
 			baseFileName := filepath.Base(path)
 			if !info.IsDir() && ext == supportedExt {
 				nameWithotExt := strings.ToLower(strings.TrimSuffix(baseFileName, supportedExt))
-				iconName := strcase.ToSnake(nameWithotExt)
+				iconName := strings.ToLower(nameWithotExt)
 				iconContent, err := os.ReadFile(path) // Use os.ReadFile instead of ioutil.ReadFile
+				if err != nil {
+					return err
+				}
+
 				// Minify the SVG content
 				var minified bytes.Buffer
 				err = m.Minify("image/svg+xml", &minified, bytes.NewReader(iconContent))
@@ -67,13 +70,48 @@ func (c *SeedCmd) StorageSeed(flags *pflag.FlagSet) {
 				}
 
 				if iconName != "" {
-					iconQuery := "INSERT INTO icon (icon_name, icon_content) VALUES ($1, $2)"
-					_, err = db.Exec(iconQuery, iconName, minified.String())
+					iconQuery := "INSERT INTO icon (icon_name,icon_content) VALUES ($1, $2)"
+					_, err = db.Exec(iconQuery, iconName,  minified.String()  )
 					if err != nil && !strings.Contains(err.Error(), "duplicate") {
 						return err
 					}
 
 				}
+			} else {
+				category := filepath.Base(path) // the folder name
+
+        // list all SVGs directly in this category folder
+        entries, err := os.ReadDir(path)
+        if err != nil {
+            return err
+        }
+        for _, entry := range entries {
+            if entry.IsDir() || filepath.Ext(entry.Name()) != supportedExt {
+                continue
+            }
+
+            filePath := filepath.Join(path, entry.Name())
+            raw, err := os.ReadFile(filePath)
+            if err != nil {
+                return err
+            }
+            var minified bytes.Buffer
+            if err = m.Minify("image/svg+xml", &minified, bytes.NewReader(raw)); err != nil {
+                return err
+            }
+
+            name := strings.TrimSuffix(entry.Name(), supportedExt)
+            iconName := strings.ToLower(name)
+
+            // now insert with category
+            _, err = db.Exec(
+                "INSERT INTO icon (icon_name, icon_content, icon_category) VALUES ($1, $2, $3)",
+                iconName, minified.String(), category,
+            )
+            if err != nil && !strings.Contains(err.Error(), "duplicate") {
+                return err
+            }
+        }
 			}
 			return nil
 		})
