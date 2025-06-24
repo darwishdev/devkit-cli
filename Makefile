@@ -8,7 +8,11 @@ pushv:
 	git tag $(TAG) && git push origin $(TAG)
 cleancli:
 	rm -rf ~/devkitcli/ ~/.config/devkitcli/ ~/release/
-build : 
+buld_mac:
+	GOOS=darwin GOARCH=amd64 go build -o devkit-mac-amd64 && \
+	GOOS=darwin GOARCH=arm64 go build -o devkit-mac-arm64
+
+build: 
 	go build -o devkit && cp devkit ~/devkitcli/
 clean:
 	cd example && rm -rf app api proto sup*
