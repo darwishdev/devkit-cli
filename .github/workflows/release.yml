@@ -3,12 +3,14 @@ name: Release
 on:
   push:
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v2.0.0
+      - "v*" # Trigger on tags like v1.0.0
 
 jobs:
-  build:
-    permissions: write-all
+  release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -16,14 +18,27 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 'stable' # or specify a specific version
-
-      - name: Build
-        run: go build -o build/devkit
+          go-version: "stable"
 
       - name: Create release directory
-        run: mkdir -p release && cp build/devkit release/ && cp -r tmpls/ release/  
-      - name: Create Release
+        run: mkdir -p release
+
+      - name: Build for Linux
+        run: |
+          GOOS=linux GOARCH=amd64 go build -o release/devkit-linux-amd64
+          zip -j release/devkit-linux-amd64.zip release/devkit-linux-amd64
+
+      - name: Build for macOS
+        run: |
+          GOOS=darwin GOARCH=amd64 go build -o release/devkit-darwin-amd64
+          zip -j release/devkit-darwin-amd64.zip release/devkit-darwin-amd64
+
+      - name: Build for Windows
+        run: |
+          GOOS=windows GOARCH=amd64 go build -o release/devkit-windows-amd64.exe
+          zip -j release/devkit-windows-amd64.zip release/devkit-windows-amd64.exe
+
+      - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -33,15 +48,33 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-      - name: Zip release files
-        run: zip -r devkit.zip release/
-      - name: Upload Release Asset
-        id: upload-release-asset 
+
+      - name: Upload Linux asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this guide for more: https://github.com/actions/create-release#uploading-assets-to-your-release
-          asset_path: ./devkit.zip
-          asset_name: devkit-cli-${{ github.ref }}.zip
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release/devkit-linux-amd64.zip
+          asset_name: devkit-linux-amd64.zip
+          asset_content_type: application/zip
+
+      - name: Upload macOS asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release/devkit-darwin-amd64.zip
+          asset_name: devkit-darwin-amd64.zip
+          asset_content_type: application/zip
+
+      - name: Upload Windows asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release/devkit-windows-amd64.zip
+          asset_name: devkit-windows-amd64.zip
           asset_content_type: application/zip
