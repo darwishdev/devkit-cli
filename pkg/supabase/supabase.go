@@ -3,7 +3,6 @@ package supabase
 import (
 	"bytes"
 	"image"
-	"image/jpeg"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,8 +10,6 @@ import (
 	"github.com/chai2010/webp"
 	"github.com/darwishdev/devkit-cli/pkg/config"
 	supaapigo "github.com/darwishdev/supaapi-go"
-	"github.com/kolesa-team/go-webp/encoder"
-	webpencoder "github.com/kolesa-team/go-webp/webp"
 	"github.com/rs/zerolog/log"
 	"github.com/supabase-community/auth-go/types"
 	storage_go "github.com/supabase-community/storage-go"
@@ -102,45 +99,45 @@ func (s *SupabaseClient) StorageSeed(conf *config.ProjectConfig, filesPath strin
 				}
 				continue
 			}
-			if strings.Contains(contentType, "jpeg") {
-				fileOpened, err := os.Open(filePath)
-				if err != nil {
-					return err
-				}
-
-				img, err := jpeg.Decode(fileOpened)
-				if err != nil {
-
-					log.Debug().Msg("jpeeeg")
-					return err
-				}
-				options, err := encoder.NewLossyEncoderOptions(encoder.PresetDefault, 75)
-				if err != nil {
-					log.Debug().Msg("NewLossyEncoderOptions new")
-					return err
-				}
-
-				var bufferOutput bytes.Buffer
-				if err := webpencoder.Encode(&bufferOutput, img, options); err != nil {
-					log.Debug().Msg("ebpencoder new")
-					return err
-				}
-				webpData := bufferOutput.Bytes()
-				fileReader := bytes.NewReader(webpData)
-				newFileName := strings.Replace(fileName, "jpeg", "webp", 1)
-				newFileName = strings.Replace(newFileName, "jpg", "webp", 1)
-				newContenType := "image/webp"
-				fileOpts := storage_go.FileOptions{
-					ContentType: &newContenType,
-					Upsert:      &upsert,
-				}
-				_, err = supaapi.StorageClient.UploadFile(bucket, newFileName, fileReader, fileOpts)
-				if err != nil {
-					return err
-				}
-				continue
-
-			}
+			// if strings.Contains(contentType, "jpeg") {
+			// 	fileOpened, err := os.Open(filePath)
+			// 	if err != nil {
+			// 		return err
+			// 	}
+			//
+			// 	img, err := jpeg.Decode(fileOpened)
+			// 	if err != nil {
+			//
+			// 		log.Debug().Msg("jpeeeg")
+			// 		return err
+			// 	}
+			// 	// options, err := encoder.NewLossyEncoderOptions(encoder.PresetDefault, 75)
+			// 	// if err != nil {
+			// 	// 	log.Debug().Msg("NewLossyEncoderOptions new")
+			// 	// 	return err
+			// 	// }
+			// 	//
+			// 	// var bufferOutput bytes.Buffer
+			// 	// if err := webpencoder.Encode(&bufferOutput, img, options); err != nil {
+			// 	// 	log.Debug().Msg("ebpencoder new")
+			// 	// 	return err
+			// 	// }
+			// 	// webpData := bufferOutput.Bytes()
+			// 	// fileReader := bytes.NewReader(webpData)
+			// 	// newFileName := strings.Replace(fileName, "jpeg", "webp", 1)
+			// 	// newFileName = strings.Replace(newFileName, "jpg", "webp", 1)
+			// 	// newContenType := "image/webp"
+			// 	fileOpts := storage_go.FileOptions{
+			// 		ContentType: &newContenType,
+			// 		Upsert:      &upsert,
+			// 	}
+			// 	_, err = supaapi.StorageClient.UploadFile(bucket, fileName, fileReader, fileOpts)
+			// 	if err != nil {
+			// 		return err
+			// 	}
+			// 	continue
+			//
+			// }
 			log.Debug().Interface("filename ", filePath).Msg("process")
 			compressedFile, err := s.CompressImage(file, 70, contentType)
 			if err != nil {
