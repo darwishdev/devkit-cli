@@ -2,12 +2,11 @@ package supabase
 
 import (
 	"bytes"
-	"image"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/chai2010/webp"
+	// "github.com/chai2010/webp"
 	"github.com/darwishdev/devkit-cli/pkg/config"
 	supaapigo "github.com/darwishdev/supaapi-go"
 	"github.com/rs/zerolog/log"
@@ -139,12 +138,13 @@ func (s *SupabaseClient) StorageSeed(conf *config.ProjectConfig, filesPath strin
 			//
 			// }
 			log.Debug().Interface("filename ", filePath).Msg("process")
-			compressedFile, err := s.CompressImage(file, 70, contentType)
-			if err != nil {
-				return err
-			}
-
-			fileReader := bytes.NewReader(compressedFile)
+			// compressedFile, err := s.CompressImage(file, 70, contentType)
+			// if err != nil {
+			// 	return err
+			// }
+			//
+			// fileReader := bytes.NewReader(compressedFile)
+			fileReader := bytes.NewReader(file)
 			_, err = supaapi.StorageClient.UploadFile(bucket, fileName, fileReader, fileOpts)
 			if err != nil {
 				return err
@@ -184,21 +184,21 @@ func (s *SupabaseClient) CompressImage(buffer []byte, quality float32, contentTy
 		// log.Debug().Interface("output is ", output).Msg("file new")
 
 	}
-	img, format, err := image.Decode(bytes.NewReader(buffer))
-	log.Printf("Image format: %s\n", format)
-	if err != nil {
-		log.Debug().Interface("error happens there", err.Error()).Msg("eror")
-		// return nil, err
-	}
-	log.Printf("Image format: %s\n", format)
+	// img, format, err := image.Decode(bytes.NewReader(buffer))
+	// log.Printf("Image format: %s\n", format)
+	// if err != nil {
+	// 	log.Debug().Interface("error happens there", err.Error()).Msg("eror")
+	// 	// return nil, err
+	// }
+	// log.Printf("Image format: %s\n", format)
 	// Compress the image to WebP format
 	var compressed bytes.Buffer
-	options := &webp.Options{Quality: quality} // Adjust quality (0-100)
-	if err := webp.Encode(&compressed, img, options); err != nil {
-		log.Debug().Interface("error happens here", err).Msg("eror")
-		return nil, err
-	}
-
+	// options := &webp.Options{Quality: quality} // Adjust quality (0-100)
+	// if err := webp.Encode(&compressed, img, options); err != nil {
+	// 	log.Debug().Interface("error happens here", err).Msg("eror")
+	// 	return nil, err
+	// }
+	//
 	return compressed.Bytes(), nil
 }
 func (s *SupabaseClient) UserCreateUpdate(conf *config.ProjectConfig, req types.AdminUpdateUserRequest) error {
